@@ -10,7 +10,7 @@
 </script>
 <style>
   :root {
-    --fs-display: clamp(3rem, 1.7rem + 5vw, 5.5rem);
+    --fs-display: clamp(2.2rem, 1.3rem + 4vw, 4.2rem);
     --fs-h2: clamp(2.5rem, 1.6rem + 3vw, 4.5rem);
     --fs-h3: clamp(1.75rem, 1.3rem + 1.4vw, 2.5rem);
     --fs-h4: clamp(1.25rem, 1.1rem + .5vw, 1.5rem);
@@ -56,15 +56,24 @@
   /* 悬浮玻璃导航 */
   .nav { position: fixed; top: 16px; left: 0; right: 0; z-index: 30; display: flex; justify-content: center; padding: 0 clamp(12px, 3vw, 24px); pointer-events: none; }
   .nav-inner {
+    position: relative; overflow: hidden;
     pointer-events: auto; width: min(980px, 100%); height: 56px;
     display: flex; align-items: center; justify-content: space-between; gap: 12px;
     padding: 0 8px 0 18px; border-radius: 999px;
-    background: linear-gradient(180deg, rgba(255,255,255,.40), rgba(255,255,255,.18));
+    background: linear-gradient(180deg, rgba(255,255,255,.58), rgba(255,255,255,.30));
     backdrop-filter: saturate(180%) blur(40px); -webkit-backdrop-filter: saturate(180%) blur(40px);
-    border: 1px solid rgba(255,255,255,.45);
-    box-shadow: 0 8px 32px rgba(20,20,19,.12), inset 0 1px 0 rgba(255,255,255,.55);
+    border: 1px solid rgba(255,255,255,.62);
+    box-shadow: 0 10px 34px rgba(20,20,19,.14), inset 0 1px 0 rgba(255,255,255,.75);
+    transition: background .3s ease, border-color .3s ease, box-shadow .3s ease;
   }
-  :root[data-theme="night"] .nav-inner { background: linear-gradient(180deg, rgba(30,52,82,.44), rgba(16,30,48,.22)); border-color: rgba(255,255,255,.14); box-shadow: 0 8px 32px rgba(0,0,0,.40), inset 0 1px 0 rgba(255,255,255,.12); }
+  .nav-inner::before { content: ""; position: absolute; left: 1px; right: 1px; top: 1px; height: 46%; border-radius: 999px 999px 40% 40%; background: linear-gradient(180deg, rgba(255,255,255,.35), transparent); pointer-events: none; }
+  .nav.on-dark .nav-inner { background: linear-gradient(180deg, rgba(26,38,56,.58), rgba(10,18,30,.40)); border-color: rgba(255,255,255,.16); box-shadow: 0 10px 34px rgba(0,0,0,.38), inset 0 1px 0 rgba(255,255,255,.16); }
+  .nav.on-dark .nav-inner::before { background: linear-gradient(180deg, rgba(255,255,255,.14), transparent); }
+  .nav.on-dark .brand, .nav.on-dark .nav-links a, .nav.on-dark .theme-toggle { color: #eef5ff; }
+  .nav.on-dark .brand .dot { background: #8ab6f6; }
+  .nav.on-dark .nav-links a:hover, .nav.on-dark .theme-toggle:hover { background: rgba(255,255,255,.12); color: #fff; }
+  :root[data-theme="night"] .nav-inner { background: linear-gradient(180deg, rgba(26,38,56,.58), rgba(10,18,30,.40)); border-color: rgba(255,255,255,.16); box-shadow: 0 10px 34px rgba(0,0,0,.38), inset 0 1px 0 rgba(255,255,255,.16); }
+  :root[data-theme="night"] .brand, :root[data-theme="night"] .nav-links a, :root[data-theme="night"] .theme-toggle { color: #eef5ff; }
   .brand { font-weight: 600; color: var(--ink); font-size: 15px; display: inline-flex; align-items: center; gap: 9px; height: 40px; padding-right: 6px; white-space: nowrap; }
   .brand .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--brand); }
   .nav-links { display: flex; align-items: center; gap: 2px; }
@@ -93,7 +102,7 @@
   .stage { position: relative; background: var(--stage-bg); color: var(--stage-ink); min-height: 100svh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 150px 6vw 90px; overflow: hidden; }
   .stage::before { content: ""; position: absolute; width: 720px; height: 720px; border-radius: 50%; background: radial-gradient(circle, rgba(29,99,206,.5), transparent 68%); top: -16%; filter: blur(30px); pointer-events: none; }
   .mark { width: 74px; height: 74px; border-radius: 22px; margin-bottom: 30px; background: conic-gradient(from 210deg, #1d63ce, #6aa6ff, #8ab6f6, #1d63ce); box-shadow: 0 12px 50px rgba(29,99,206,.55); position: relative; z-index: 1; }
-  .stage h1 { color: var(--stage-ink); font-size: var(--fs-display); font-weight: 700; letter-spacing: -.03em; line-height: 1.02; position: relative; z-index: 1; }
+  .stage h1 { white-space: nowrap; color: var(--stage-ink); font-size: var(--fs-display); font-weight: 700; letter-spacing: -.03em; line-height: 1.02; position: relative; z-index: 1; }
   .stage .name { margin-top: 28px; font-size: clamp(2rem, 1.5rem + 1.4vw, 3rem); color: var(--stage-accent); font-weight: 600; letter-spacing: .06em; position: relative; z-index: 1; }
   .stage .sub { margin-top: 14px; font-size: clamp(1rem, .95rem + .4vw, 1.3rem); color: var(--stage-soft); max-width: 640px; position: relative; z-index: 1; }
   .stage-actions { margin-top: 36px; display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; position: relative; z-index: 1; }
@@ -315,11 +324,11 @@
 
 <!-- 舞台式开场 -->
 <section class="stage">
-<h1>一步，<br>一步步</h1>
+<h1>一步，一步步</h1>
   <div class="name">金航 · Jahan</div>
   <div class="sub">我是金航。写内容，做产品，也把一路的成长，做成看得见的样子。</div>
   <div class="stage-actions">
-    <a class="btn" href="#work">看作品</a>
+    <a class="btn" href="#work">一览作品</a>
     <a class="btn ghost" href="#contact">聊一聊</a>
   </div>
   <div class="scroll-cue" aria-hidden="true">
@@ -539,9 +548,17 @@
 
 <script>
   (function () {
-    var root = document.documentElement, btn = document.getElementById('themeToggle'), use = btn.querySelector('use');
-    function sync() { var n = root.getAttribute('data-theme') === 'night'; use.setAttribute('href', n ? '#i-sun' : '#i-moon'); }
+    var root = document.documentElement, btn = document.getElementById('themeToggle'), use = btn.querySelector('use'), nav = document.querySelector('.nav'), stage = document.querySelector('.stage');
+    function navState() {
+      var night = root.getAttribute('data-theme') === 'night';
+      var dark = night || (stage && window.scrollY < stage.offsetHeight * 0.7);
+      if (nav) nav.classList.toggle('on-dark', !!dark);
+      if (use) use.setAttribute('href', night ? '#i-sun' : '#i-moon');
+    }
+    function sync() { navState(); }
     sync();
+    window.addEventListener('scroll', navState, { passive: true });
+    window.addEventListener('resize', navState);
     btn.addEventListener('click', function () {
       var next = root.getAttribute('data-theme') === 'night' ? 'day' : 'night';
       root.setAttribute('data-theme', next);
