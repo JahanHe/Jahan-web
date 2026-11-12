@@ -10,7 +10,7 @@
 </script>
 <style>
   :root {
-    --fs-display: clamp(2.2rem, 1.3rem + 4vw, 4.2rem);
+    --fs-display: clamp(2.6rem, 10vw, 5.5rem);
     --fs-h2: clamp(2.5rem, 1.6rem + 3vw, 4.5rem);
     --fs-h3: clamp(1.75rem, 1.3rem + 1.4vw, 2.5rem);
     --fs-h4: clamp(1.25rem, 1.1rem + .5vw, 1.5rem);
@@ -103,7 +103,7 @@
   .stage::before { content: ""; position: absolute; width: 720px; height: 720px; border-radius: 50%; background: radial-gradient(circle, rgba(29,99,206,.5), transparent 68%); top: -16%; filter: blur(30px); pointer-events: none; }
   .mark { width: 74px; height: 74px; border-radius: 22px; margin-bottom: 30px; background: conic-gradient(from 210deg, #1d63ce, #6aa6ff, #8ab6f6, #1d63ce); box-shadow: 0 12px 50px rgba(29,99,206,.55); position: relative; z-index: 1; }
   .stage h1 { white-space: nowrap; color: var(--stage-ink); font-size: var(--fs-display); font-weight: 700; letter-spacing: -.03em; line-height: 1.02; position: relative; z-index: 1; }
-  .stage .name { margin-top: 28px; font-size: clamp(2rem, 1.5rem + 1.4vw, 3rem); color: var(--stage-accent); font-weight: 600; letter-spacing: .06em; position: relative; z-index: 1; }
+  .stage .name { white-space: nowrap; margin-top: 22px; font-size: clamp(1.2rem, 4vw, 1.8rem); color: var(--stage-accent); font-weight: 600; letter-spacing: .06em; position: relative; z-index: 1; }
   .stage .sub { margin-top: 14px; font-size: clamp(1rem, .95rem + .4vw, 1.3rem); color: var(--stage-soft); max-width: 640px; position: relative; z-index: 1; }
   .stage-actions { margin-top: 36px; display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; position: relative; z-index: 1; }
   .scroll-cue { margin-top: 60px; display: flex; flex-direction: column; align-items: center; color: var(--stage-soft); position: relative; z-index: 1; }
@@ -326,7 +326,7 @@
 <section class="stage">
 <h1>一步，一步步</h1>
   <div class="name">金航 · Jahan</div>
-  <div class="sub">我是金航。写内容，做产品，也把一路的成长，做成看得见的样子。</div>
+  <div class="sub">写内容，做产品，也把一路的成长，做成看得见的样子。</div>
   <div class="stage-actions">
     <a class="btn" href="#work">一览作品</a>
     <a class="btn ghost" href="#contact">聊一聊</a>
