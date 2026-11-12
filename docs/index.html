@@ -11,7 +11,7 @@
 <style>
   :root {
     --fs-display: clamp(2.6rem, 10vw, 5.5rem);
-    --fs-h2: clamp(2.5rem, 1.6rem + 3vw, 4.5rem);
+    --fs-h2: clamp(1.4rem, 6vw, 5rem);
     --fs-h3: clamp(1.75rem, 1.3rem + 1.4vw, 2.5rem);
     --fs-h4: clamp(1.25rem, 1.1rem + .5vw, 1.5rem);
     --fs-lead: clamp(1.35rem, 1.1rem + 1vw, 2rem);
@@ -44,7 +44,7 @@
   body { background: var(--canvas); color: var(--body); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif; -webkit-font-smoothing: antialiased; line-height: 1.65; transition: background .3s ease, color .3s ease; }
   .icon { width: 1em; height: 1em; }
   .wrap { width: min(1180px, 100%); margin: 0 auto; padding: 0 clamp(20px, 4vw, 48px); }
-  h2 { font-size: var(--fs-h2); line-height: 1.1; color: var(--heading); font-weight: 600; letter-spacing: -.015em; }
+  h2 { font-size: var(--fs-h2); line-height: 1.1; color: var(--heading); font-weight: 600; letter-spacing: -.015em; white-space: nowrap; }
   .sec { padding: clamp(84px, 10vw, 150px) 0; }
   .sec-soft { background: var(--surface-soft); }
   .sec-inner { width: min(1120px, 100%); margin: 0 auto; padding: 0 clamp(20px, 4vw, 48px); }
@@ -224,7 +224,7 @@
 
   /* 联系 */
   .contact { text-align: center; }
-  .contact h2 { max-width: none; margin: 0 auto; white-space: nowrap; font-size: clamp(1.4rem, 6.2vw, 4.5rem); }
+  .contact h2 { max-width: none; margin: 0 auto; }
   .contact .line { margin-top: 24px; color: var(--muted); font-size: 16px; line-height: 2; }
   .contact .line a { color: var(--link); text-decoration: none; }
   .contact .line a:hover { text-decoration: underline; }
@@ -267,7 +267,7 @@
   @media (max-width: 600px) {
     .bento, .infl-grid { grid-template-columns: 1fr; }
     .cards { flex-direction: column; }
-    .card { max-width: 100%; }
+    .card { flex: 0 0 auto; width: 100%; max-width: 100%; }
     .tile.wide { grid-column: span 1; }
     .stats-grid { grid-template-columns: repeat(2, 1fr); }
     .btn-row, .stage-actions { flex-direction: column; align-items: center; }
