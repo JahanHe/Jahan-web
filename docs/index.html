@@ -1,25 +1,604 @@
-<!doctype html>
-<html lang="zh-CN">
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="day">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="robots" content="noindex, nofollow">
-  <meta name="description" content="个人网站预发布环境，等待上传 Demo。">
-  <title>个人网站 · 预发布环境</title>
-  <style>
-    :root { color-scheme: light dark; font-family: system-ui, sans-serif; }
-    body { margin: 0; min-height: 100svh; display: grid; place-items: center; }
-    main { max-width: 38rem; padding: 2rem; }
-    p { line-height: 1.8; }
-    h1 { font-size: clamp(1.8rem, 5vw, 2.5rem); line-height: 1.3; }
-    .label { font-size: .85rem; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>金航 Jahan</title>
+<script>
+  try { var _t = localStorage.getItem('theme'); if (_t === 'night' || _t === 'day') document.documentElement.setAttribute('data-theme', _t); } catch (e) {}
+</script>
+<style>
+  :root {
+    --fs-display: clamp(3rem, 1.7rem + 5vw, 5.5rem);
+    --fs-h2: clamp(2.5rem, 1.6rem + 3vw, 4.5rem);
+    --fs-h3: clamp(1.75rem, 1.3rem + 1.4vw, 2.5rem);
+    --fs-h4: clamp(1.25rem, 1.1rem + .5vw, 1.5rem);
+    --fs-lead: clamp(1.35rem, 1.1rem + 1vw, 2rem);
+    --fs-body: 1.0625rem;
+    --fs-small: .9375rem;
+    --fs-label: .8125rem;
+    color-scheme: light;
+    --canvas: #f6f9fd; --surface: #fafcfe; --surface-soft: #edf3fb;
+    --ink: #1d1d1f; --body: #3d3d3a; --muted: #6c6a64;
+    --line: #d2e0f5; --control: #817d75;
+    --brand: #1d63ce; --action: #164fa5; --action-hover: #10418e;
+    --on-action: #fff; --heading: #1d63ce; --link: #164fa5;
+    --float: 0 18px 60px rgba(20,20,19,.16);
+    --stage-bg: radial-gradient(120% 120% at 50% -10%, #16305a 0%, #0a1626 46%, #05090f 100%);
+    --stage-ink: #ffffff; --stage-soft: #a1b4cf; --stage-accent: #8ab6f6; --stage-line: #21354f;
+  }
+  :root[data-theme="night"] {
+    color-scheme: dark;
+    --canvas: #111f32; --surface: #1b304d; --surface-soft: #14263d;
+    --ink: #dbe7f6; --body: #becfe5; --muted: #a1b4cf;
+    --line: #355373; --control: #7994b6;
+    --brand: #1d63ce; --action: #1d63ce; --action-hover: #286fd2;
+    --on-action: #fff; --heading: #b2d0ff; --link: #9ec5ff;
+    --float: 0 18px 60px rgba(0,0,0,.5);
+    --stage-bg: radial-gradient(120% 120% at 50% -10%, #1a3a6b 0%, #0c1a2e 46%, #060b14 100%);
+    --stage-ink: #ffffff; --stage-soft: #a1b4cf; --stage-accent: #9ec5ff; --stage-line: #2a4463;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--canvas); color: var(--body); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif; -webkit-font-smoothing: antialiased; line-height: 1.65; transition: background .3s ease, color .3s ease; }
+  .icon { width: 1em; height: 1em; }
+  .wrap { width: min(1180px, 100%); margin: 0 auto; padding: 0 clamp(20px, 4vw, 48px); }
+  h2 { font-size: var(--fs-h2); line-height: 1.1; color: var(--heading); font-weight: 600; letter-spacing: -.015em; }
+  .sec { padding: clamp(84px, 10vw, 150px) 0; }
+  .sec-soft { background: var(--surface-soft); }
+  .sec-inner { width: min(1120px, 100%); margin: 0 auto; padding: 0 clamp(20px, 4vw, 48px); }
+  .sec-head { text-align: center; margin-bottom: 60px; }
+  .sec-head .label, .showcase .label { font-size: var(--fs-label); letter-spacing: .2em; color: var(--brand); text-transform: none; display: block; margin-bottom: 14px; }
+  .sec-head p { margin-top: 16px; color: var(--muted); font-size: var(--fs-body); max-width: 680px; margin-left: auto; margin-right: auto; }
+
+  /* 导航 */
+  /* 悬浮玻璃导航 */
+  .nav { position: fixed; top: 16px; left: 0; right: 0; z-index: 30; display: flex; justify-content: center; padding: 0 clamp(12px, 3vw, 24px); pointer-events: none; }
+  .nav-inner {
+    pointer-events: auto; width: min(980px, 100%); height: 56px;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 0 8px 0 18px; border-radius: 999px;
+    background: linear-gradient(180deg, rgba(255,255,255,.40), rgba(255,255,255,.18));
+    backdrop-filter: saturate(180%) blur(40px); -webkit-backdrop-filter: saturate(180%) blur(40px);
+    border: 1px solid rgba(255,255,255,.45);
+    box-shadow: 0 8px 32px rgba(20,20,19,.12), inset 0 1px 0 rgba(255,255,255,.55);
+  }
+  :root[data-theme="night"] .nav-inner { background: linear-gradient(180deg, rgba(30,52,82,.44), rgba(16,30,48,.22)); border-color: rgba(255,255,255,.14); box-shadow: 0 8px 32px rgba(0,0,0,.40), inset 0 1px 0 rgba(255,255,255,.12); }
+  .brand { font-weight: 600; color: var(--ink); font-size: 15px; display: inline-flex; align-items: center; gap: 9px; height: 40px; padding-right: 6px; white-space: nowrap; }
+  .brand .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--brand); }
+  .nav-links { display: flex; align-items: center; gap: 2px; }
+  .nav-links a, .theme-toggle {
+    height: 40px; min-width: 40px; padding: 0 14px; border-radius: 999px;
+    display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+    color: var(--body); text-decoration: none; font-size: 14px; font-family: inherit;
+    border: 1px solid transparent; background: transparent; cursor: pointer;
+    transition: background .18s ease, color .18s ease, border-color .18s ease;
+  }
+  .nav-links a:hover, .theme-toggle:hover { background: var(--surface-soft); color: var(--ink); }
+  .theme-toggle { min-width: 40px; padding: 0; font-size: 17px; }
+  .nav-links a .icon, .theme-toggle .icon { width: 18px; height: 18px; }
+  .nav .icon-only { display: none; }
+  section[id] { scroll-margin-top: 96px; }
+  @media (max-width: 860px) {
+    .nav { top: 12px; }
+    .nav-inner { height: 52px; padding: 0 6px 0 14px; gap: 8px; }
+    .brand { font-size: 14px; height: 38px; }
+    .nav-links a, .theme-toggle { height: 38px; min-width: 38px; padding: 0 10px; }
+    .nav-links .label { display: none; }
+    .nav-links .icon-only { display: inline-flex; }
+  }
+
+  /* 舞台式开场（发布会） */
+  .stage { position: relative; background: var(--stage-bg); color: var(--stage-ink); min-height: 100svh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 150px 6vw 90px; overflow: hidden; }
+  .stage::before { content: ""; position: absolute; width: 720px; height: 720px; border-radius: 50%; background: radial-gradient(circle, rgba(29,99,206,.5), transparent 68%); top: -16%; filter: blur(30px); pointer-events: none; }
+  .mark { width: 74px; height: 74px; border-radius: 22px; margin-bottom: 30px; background: conic-gradient(from 210deg, #1d63ce, #6aa6ff, #8ab6f6, #1d63ce); box-shadow: 0 12px 50px rgba(29,99,206,.55); position: relative; z-index: 1; }
+  .stage h1 { color: var(--stage-ink); font-size: var(--fs-display); font-weight: 700; letter-spacing: -.03em; line-height: 1.02; position: relative; z-index: 1; }
+  .stage .name { margin-top: 28px; font-size: clamp(2rem, 1.5rem + 1.4vw, 3rem); color: var(--stage-accent); font-weight: 600; letter-spacing: .06em; position: relative; z-index: 1; }
+  .stage .sub { margin-top: 14px; font-size: clamp(1rem, .95rem + .4vw, 1.3rem); color: var(--stage-soft); max-width: 640px; position: relative; z-index: 1; }
+  .stage-actions { margin-top: 36px; display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; position: relative; z-index: 1; }
+  .scroll-cue { margin-top: 60px; display: flex; flex-direction: column; align-items: center; color: var(--stage-soft); position: relative; z-index: 1; }
+  .scroll-cue svg { width: 22px; height: 22px; animation: chev 1.8s ease-in-out infinite; }
+  .scroll-cue svg:nth-child(2) { animation-delay: .2s; opacity: .55; }
+  .scroll-cue svg:nth-child(3) { animation-delay: .4s; opacity: .25; }
+  @keyframes chev { 0%,100% { transform: translateY(0); opacity:.35 } 50% { transform: translateY(7px); opacity:1 } }
+
+  .btn { display: inline-flex; align-items: center; gap: 9px; padding: 0 24px; height: 46px; border-radius: 999px; background: var(--action); color: var(--on-action); font-size: 16px; font-weight: 500; text-decoration: none; border: 1px solid transparent; cursor: pointer; font-family: inherit; transition: background .18s ease; }
+  .btn:hover { background: var(--action-hover); }
+  .btn.ghost { background: transparent; color: var(--link); border: 1px solid var(--control); }
+  .btn.ghost:hover { background: var(--surface-soft); }
+  .stage .btn.ghost, .showcase .btn.ghost { color: var(--stage-accent); border-color: var(--stage-line); }
+  .stage .btn.ghost:hover, .showcase .btn.ghost:hover { background: rgba(255,255,255,.06); }
+
+  /* 大数字带 */
+  .stats-band { background: var(--surface); border-bottom: 1px solid var(--line); }
+  .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; padding: 52px 0; }
+  .stat { text-align: center; text-decoration: none; color: inherit; display: block; }
+  a.stat:hover b { color: var(--action-hover); }
+  .stat .ic { font-size: 22px; color: var(--brand); }
+  .stat b { display: block; margin-top: 10px; font-size: clamp(1.6rem, 1.2rem + 1.1vw, 2.5rem); color: var(--heading); font-weight: 700; letter-spacing: -.02em; }
+  .stat span { color: var(--muted); font-size: 14px; }
+
+  /* 关于 */
+  .about-grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: 56px; align-items: start; }
+  .about-lead { font-size: var(--fs-lead); line-height: 1.5; color: var(--ink); font-weight: 600; letter-spacing: -.01em; }
+  .about-lead em { color: var(--brand); font-style: normal; }
+  .about-copy { margin-top: 22px; color: var(--muted); font-size: 17px; line-height: 1.85; }
+
+  /* 三件事 */
+  .theses { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .thesis { background: var(--surface); border: 1px solid var(--line); border-radius: 24px; padding: 34px 30px; }
+  .thesis .no { font-size: 13px; letter-spacing: .16em; color: var(--brand); }
+  .thesis h3 { margin-top: 16px; font-size: var(--fs-h4); color: var(--ink); font-weight: 700; }
+  .thesis p { margin-top: 10px; color: var(--muted); font-size: 15.5px; line-height: 1.7; }
+
+  /* 产品展示带（发布会） */
+  .showcase { background: var(--stage-bg); color: var(--stage-ink); padding: clamp(72px, 10vw, 130px) 0; position: relative; overflow: hidden; }
+  .showcase::after { content: ""; position: absolute; width: 600px; height: 600px; border-radius: 50%; background: radial-gradient(circle, rgba(29,99,206,.38), transparent 68%); top: 10%; left: 50%; transform: translateX(-50%); filter: blur(40px); pointer-events: none; }
+  .showcase .sec-inner { position: relative; z-index: 1; }
+  .showcase .label { color: var(--stage-accent); text-align: center; }
+  .showcase h2 { color: var(--stage-ink); text-align: center; font-weight: 700; }
+  .showcase .lead { color: var(--stage-soft); text-align: center; max-width: 620px; margin: 16px auto 0; font-size: 17px; }
+  .device { width: min(880px, 92vw); margin: 46px auto 0; border-radius: 16px; overflow: hidden; border: 1px solid var(--stage-line); background: #0b1524; box-shadow: 0 40px 120px rgba(29,99,206,.35); }
+  .device-bar { display: flex; gap: 8px; padding: 14px 16px; background: #0f1c2f; border-bottom: 1px solid var(--stage-line); }
+  .device-bar i { width: 11px; height: 11px; border-radius: 50%; background: #2a3f5c; }
+  .device-screen { display: grid; grid-template-columns: 178px 1fr; min-height: 300px; text-align: left; }
+  .mock-side { border-right: 1px solid #1b2f47; padding: 18px; background: #0a1423; }
+  .mock-side .m { height: 10px; border-radius: 5px; background: #1b2f47; margin-bottom: 14px; }
+  .mock-side .m.s { width: 62%; }
+  .mock-side .m.hi { background: #1d63ce; }
+  .mock-main { padding: 22px; display: flex; flex-direction: column; gap: 12px; background: #0c1728; }
+  .bubble { max-width: 74%; padding: 10px 14px; border-radius: 14px; font-size: 13px; line-height: 1.5; }
+  .bubble.in { background: #16283f; color: #cfe0f5; align-self: flex-start; border-bottom-left-radius: 4px; }
+  .bubble.out { background: #1d63ce; color: #fff; align-self: flex-end; border-bottom-right-radius: 4px; }
+  .bubble .meta { display: block; font-size: 10.5px; opacity: .6; margin-top: 4px; }
+  .feature-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; max-width: 900px; margin: 54px auto 0; text-align: center; }
+  .feature .ic { font-size: 26px; color: var(--stage-accent); }
+  .feature h5 { color: var(--stage-ink); margin-top: 12px; font-size: 16px; font-weight: 600; }
+  .feature p { color: var(--stage-soft); font-size: 14px; margin-top: 6px; line-height: 1.65; }
+  .showcase-cta { text-align: center; margin-top: 44px; }
+
+  /* 作品 */
+  .group { margin-top: 0; }
+  .group + .group { margin-top: 80px; border-top: 1px solid var(--line); padding-top: 64px; }
+  .group:first-of-type { margin-top: 0; }
+  .group-head { display: flex; align-items: center; justify-content: center; gap: 16px; margin-bottom: 34px; flex-wrap: wrap; text-align: center; }
+  .group-head .gno { font-size: 14px; letter-spacing: .16em; color: var(--brand); }
+  .group-head h3 { font-size: var(--fs-h3); color: var(--heading); font-weight: 700; letter-spacing: -.02em; }
+  .group-head .gsub { color: var(--muted); font-size: 15px; }
+  .no .icon, .gno .icon { width: 22px; height: 22px; vertical-align: -5px; }
+  .gno { display: inline-flex; align-items: center; }
+
+  .cards { display: flex; flex-wrap: wrap; justify-content: center; align-items: stretch; gap: 24px; }
+  .card { flex: 1 1 300px; max-width: 400px; background: var(--surface); border: 1px solid var(--line); border-radius: 24px; overflow: hidden; display: flex; flex-direction: column; }
+  .thumb { position: relative; aspect-ratio: 16/9; }
+  .thumb .fmt { position: absolute; left: 14px; top: 14px; display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: #fff; background: rgba(0,0,0,.32); border: 1px solid rgba(255,255,255,.28); padding: 4px 10px; border-radius: 999px; backdrop-filter: blur(6px); }
+  .art-a { background: radial-gradient(120% 120% at 12% 12%, #1d63ce, #0b3477 62%, #07101e); }
+  .art-b { background: linear-gradient(135deg, #1d63ce, #6aa6ff 55%, #dfeaff); }
+  .art-c { background: linear-gradient(125deg, #243e5f, #4b7bbd 52%, #a9c6ef); }
+  .art-d { background: radial-gradient(120% 120% at 88% 8%, #dfeaff, #6aa6ff 45%, #164fa5); }
+  .art-e { background: conic-gradient(from 200deg at 50% 50%, #1d63ce, #6aa6ff, #0b3477, #1d63ce); }
+  .art-f { background: linear-gradient(160deg, #10213a, #2a5aa0 55%, #8ab6f6); }
+  .art-g { background: radial-gradient(120% 120% at 0% 100%, #6aa6ff, #1d63ce 55%, #07101e); }
+  .card-body { padding: 22px 22px 20px; display: flex; flex-direction: column; flex: 1; }
+  .card .tagline { font-size: 12px; letter-spacing: .1em; color: var(--brand); }
+  .card h4 { margin-top: 8px; font-size: var(--fs-h4); color: var(--ink); font-weight: 700; letter-spacing: -.01em; }
+  .card .plain { margin-top: 10px; color: var(--muted); font-size: var(--fs-small); line-height: 1.65; }
+  .card .preview { max-height: 0; opacity: 0; overflow: hidden; transition: max-height .45s ease, opacity .35s ease, margin .45s ease; }
+  .card.open .preview { max-height: 460px; opacity: 1; margin-top: 16px; }
+  .preview .row { display: grid; grid-template-columns: 44px 1fr; gap: 10px; padding: 8px 0; border-top: 1px solid var(--line); }
+  .preview .row:first-child { border-top: 0; }
+  .preview .row .k { font-size: 12px; color: var(--brand); padding-top: 2px; }
+  .preview .row .v { font-size: 14px; color: var(--body); line-height: 1.6; }
+  .card-actions { width: 100%; margin-top: auto; padding-top: 18px; display: flex; flex-wrap: wrap; align-items: center; gap: 16px; }
+  .linkbtn { white-space: nowrap; background: none; border: none; color: var(--link); font-size: 14.5px; font-weight: 500; cursor: pointer; font-family: inherit; padding: 8px 0; min-height: 44px; display: inline-flex; align-items: center; gap: 6px; }
+  .linkbtn:hover { text-decoration: underline; }
+  .linkbtn .chev { transition: transform .25s ease; }
+  .card.open .expand .chev { transform: rotate(180deg); }
+
+  /* 工具箱 */
+  .bento { display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: minmax(140px, auto); gap: 16px; }
+  .tile { background: var(--surface); border: 1px solid var(--line); border-radius: 24px; padding: 26px; display: flex; flex-direction: column; justify-content: space-between; }
+  .tile .ic { font-size: 26px; color: var(--brand); }
+  .tile h4 { margin-top: 18px; font-size: var(--fs-h4); color: var(--ink); font-weight: 600; }
+  .tile p { margin-top: 8px; color: var(--muted); font-size: 13.5px; line-height: 1.6; }
+  .tile.wide { grid-column: span 2; }
+  .tile.wide h4 { font-size: clamp(1.3rem, 1.1rem + .7vw, 1.7rem); font-weight: 700; }
+  .tile.wide p { font-size: 15px; max-width: 460px; }
+
+  /* 影响 */
+  .infl-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .infl { background: var(--surface); border: 1px solid var(--line); border-radius: 24px; padding: 28px; }
+  .infl .ic { width: 42px; height: 42px; border-radius: 12px; display: grid; place-items: center; background: var(--surface-soft); color: var(--brand); font-size: 20px; }
+  .infl h4 { margin-top: 18px; font-size: var(--fs-h4); color: var(--ink); font-weight: 600; }
+  .infl p { margin-top: 8px; color: var(--muted); font-size: 14.5px; line-height: 1.65; }
+
+  /* 联系 */
+  .contact { text-align: center; }
+  .contact h2 { max-width: 18ch; margin: 0 auto; }
+  .contact .line { margin-top: 24px; color: var(--muted); font-size: 16px; line-height: 2; }
+  .contact .line a { color: var(--link); text-decoration: none; }
+  .contact .line a:hover { text-decoration: underline; }
+  .btn-row { margin-top: 32px; display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+  .footer { margin-top: 64px; padding-bottom: 32px; color: var(--muted); font-size: 13px; letter-spacing: .06em; }
+
+  .reveal { opacity: 0; transform: translateY(22px); transition: opacity .7s ease, transform .7s ease; }
+  .reveal.in { opacity: 1; transform: none; }
+  .d1 { transition-delay: .08s; } .d2 { transition-delay: .16s; }
+
+  /* 详情浮层 */
+  .overlay { position: fixed; inset: 0; z-index: 100; display: none; }
+  .overlay.open { display: block; }
+  .overlay .backdrop { position: absolute; inset: 0; background: rgba(5,9,15,.62); backdrop-filter: blur(3px); }
+  .overlay .panel { position: absolute; inset: 0; margin: auto; width: min(760px, 94vw); max-height: 90vh; background: var(--canvas); border: 1px solid var(--line); border-radius: 24px; overflow-y: auto; box-shadow: var(--float); }
+  .overlay .panel-inner { padding: clamp(26px, 4vw, 44px); }
+  .overlay .close { position: sticky; top: 14px; float: right; margin: 14px 14px 0 0; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--control); background: var(--surface); color: var(--ink); display: grid; place-items: center; cursor: pointer; font-size: 18px; z-index: 2; }
+  .overlay .close:hover { background: var(--surface-soft); }
+  .overlay .o-label { font-size: 13px; letter-spacing: .16em; color: var(--brand); }
+  .overlay .o-title { margin-top: 10px; font-size: clamp(2rem, 1.5rem + 2vw, 3rem); line-height: 1.1; color: var(--heading); font-weight: 700; letter-spacing: -.02em; }
+  .overlay .o-plain { margin-top: 14px; color: var(--muted); font-size: 17px; line-height: 1.7; }
+  .overlay .o-block { margin-top: 28px; padding-top: 24px; border-top: 1px solid var(--line); }
+  .overlay .o-block h5 { font-size: 13px; letter-spacing: .14em; color: var(--brand); font-weight: 600; margin-bottom: 10px; }
+  .overlay .o-block p { color: var(--body); font-size: 16.5px; line-height: 1.8; }
+  .overlay .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+  .overlay .chip { font-size: 13.5px; color: var(--body); background: var(--surface-soft); border: 1px solid var(--line); padding: 6px 13px; border-radius: 999px; }
+  .overlay .o-foot { margin-top: 32px; display: flex; gap: 14px; flex-wrap: wrap; }
+
+  @media (max-width: 900px) {
+    .about-grid { grid-template-columns: 1fr; gap: 36px; }
+    .theses, .feature-row { grid-template-columns: 1fr; }
+    .cards { gap: 18px; }
+    .bento { grid-template-columns: repeat(2, 1fr); }
+    .tile.wide { grid-column: span 2; }
+    .infl-grid { grid-template-columns: repeat(2, 1fr); }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .device-screen { grid-template-columns: 1fr; }
+    .mock-side { display: none; }
+  }
+  @media (max-width: 600px) {
+    .bento, .infl-grid { grid-template-columns: 1fr; }
+    .cards { flex-direction: column; }
+    .card { max-width: 100%; }
+    .tile.wide { grid-column: span 1; }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .btn-row, .stage-actions { flex-direction: column; align-items: center; }
+  }
+  @media print {
+    :root { --canvas:#fff; --surface:#fff; --surface-soft:#f4f6fa; --ink:#000; --body:#222; --muted:#555; --line:#ccc; --heading:#000; --brand:#164fa5; --link:#164fa5; --stage-bg:#fff; --stage-ink:#000; --stage-soft:#333; --stage-accent:#164fa5; }
+    .nav, .scroll-cue, .card-actions, .theme-toggle, .btn-row, .overlay, .device { display: none !important; }
+    .stage, .showcase { background: #fff !important; color: #000 !important; min-height: auto; padding: 24px 0; }
+    .stage h1, .showcase h2, .feature h5, .stage .name { color: #000 !important; }
+    .reveal { opacity: 1; transform: none; }
+    .preview { max-height: none !important; opacity: 1 !important; }
+    .sec { padding: 22px 0; page-break-inside: avoid; }
+    .card { break-inside: avoid; }
+  }
+</style>
 </head>
 <body>
-  <main>
-    <p class="label">个人网站 · 预发布</p>
-    <h1>等待上传 Demo。</h1>
-    <p>这是用于检查部署是否正常的占位页。网站内容将在 Demo 文件准备好后更新。</p>
-  </main>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="7.5" r="4.2" fill="currentColor"/><path d="M4 20.5c0-4 3.6-7 8-7s8 3 8 7v.5H4v-.5Z" fill="currentColor" opacity=".45"/></symbol>
+  <symbol id="i-work" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="3" fill="currentColor" opacity=".45"/><path d="M2 10.5c0-2 1.3-3.5 3-3.5h14c1.7 0 3 1.5 3 3.5v.5H2v-.5Z" fill="currentColor"/><path d="M9 7V5.5A2.5 2.5 0 0 1 11.5 3h1A2.5 2.5 0 0 1 15 5.5V7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24"><rect x="2" y="4.5" width="20" height="15" rx="3" fill="currentColor" opacity=".45"/><path d="M2.5 7.2 12 13l9.5-5.8" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-chev" viewBox="0 0 24 24"><path d="m6.5 9.5 5.5 5.5 5.5-5.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4.5 12h14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="m12.5 6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.6" fill="currentColor"/><path d="M12 2.5V5M12 19v2.5M2.5 12H5M19 12h2.5M5.2 5.2 7 7M17 17l1.8 1.8M18.8 5.2 17 7M7 17l-1.8 1.8" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" opacity=".6"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20.5 13.2A8.6 8.6 0 1 1 10.8 3.5a6.8 6.8 0 0 0 9.7 9.7Z" fill="currentColor"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M3 5.5A2.5 2.5 0 0 1 5.5 3H11v16.5H5.5A2.5 2.5 0 0 0 3 22V5.5Z" fill="currentColor" opacity=".45"/><path d="M21 5.5A2.5 2.5 0 0 0 18.5 3H13v16.5h5.5A2.5 2.5 0 0 1 21 22V5.5Z" fill="currentColor"/></symbol>
+  <symbol id="i-wechat" viewBox="0 0 24 24"><path d="M12 3C6.9 3 3 6.4 3 10.6c0 2.4 1.3 4.6 3.4 6L5.4 20l3.6-1.6c.9.2 1.9.3 3 .3 5.1 0 9-3.4 9-7.6S17.1 3 12 3Z" fill="currentColor"/></symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="currentColor" opacity=".4"/><path d="M3 12h18M12 3c2.5 2.6 3.9 5.9 3.9 9s-1.4 6.4-3.9 9c-2.5-2.6-3.9-5.9-3.9-9s1.4-6.4 3.9-9Z" fill="none" stroke="currentColor" stroke-width="1.8"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3.5v10.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M7.8 10.8 12 15l4.2-4.2" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><rect x="4.5" y="17.5" width="15" height="3" rx="1.5" fill="currentColor" opacity=".45"/></symbol>
+  <symbol id="i-pen" viewBox="0 0 24 24"><path d="M15.5 3.5 20.5 8.5 9 20H4v-5L15.5 3.5Z" fill="currentColor" opacity=".5"/><path d="M13.5 5.5 18.5 10.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M4 20l4.5-1.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-code" viewBox="0 0 24 24"><path d="M8.5 7.5 4 12l4.5 4.5M15.5 7.5 20 12l-4.5 4.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><rect x="3.5" y="13" width="4" height="8" rx="1.5" fill="currentColor" opacity=".45"/><rect x="10" y="8.5" width="4" height="12.5" rx="1.5" fill="currentColor" opacity=".7"/><rect x="16.5" y="4" width="4" height="17" rx="1.5" fill="currentColor"/></symbol>
+  <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="currentColor" opacity=".3"/><circle cx="12" cy="12" r="5.5" fill="currentColor" opacity=".55"/><circle cx="12" cy="12" r="2.4" fill="currentColor"/></symbol>
+  <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3l2.3 6L20 11.5l-5.7 2.5L12 20l-2.3-6L4 11.5 9.7 9 12 3Z" fill="currentColor"/><path d="M18.5 2.5l.7 1.9 1.9.7-1.9.7-.7 1.9-.7-1.9-1.9-.7 1.9-.7.7-1.9Z" fill="currentColor" opacity=".5"/></symbol>
+  <symbol id="i-cpu" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2.5" fill="currentColor" opacity=".45"/><rect x="9.5" y="9.5" width="5" height="5" rx="1" fill="currentColor"/><path d="M9 2.5V6M15 2.5V6M9 18v3.5M15 18v3.5M2.5 9H6M2.5 15H6M18 9h3.5M18 15h3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l7.5 3v6c0 4.4-3.1 8.2-7.5 9.4C7.6 20.2 4.5 16.4 4.5 12V6L12 3Z" fill="currentColor" opacity=".45"/><path d="M8.8 12.2 11 14.4l4.4-4.4" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13.5 2 4.5 13.5h6L9 22l9-11.5h-6L13.5 2Z" fill="currentColor"/></symbol>
+</svg>
+
+<header class="nav">
+  <div class="nav-inner">
+    <div class="brand"><span class="dot"></span>金航 Jahan</div>
+    <nav class="nav-links">
+      <a href="#about"><svg class="icon icon-only"><use href="#i-user"/></svg><span class="label">关于</span></a>
+      <a href="#work"><svg class="icon icon-only"><use href="#i-work"/></svg><span class="label">作品</span></a>
+      <a href="#contact"><svg class="icon icon-only"><use href="#i-mail"/></svg><span class="label">联系</span></a>
+      <a href="https://github.com/JahanHe" target="_blank" rel="noopener"><svg class="icon icon-only"><use href="#i-globe"/></svg><span class="label">GitHub</span></a>
+      <button class="theme-toggle" id="themeToggle" aria-label="切换白天/夜晚" title="切换白天 / 夜晚"><svg class="icon"><use href="#i-moon"/></svg></button>
+    </nav>
+  </div>
+</header>
+
+<!-- 舞台式开场 -->
+<section class="stage">
+<h1>一步，<br>一步步</h1>
+  <div class="name">金航 · Jahan</div>
+  <div class="sub">我是金航。写内容，做产品，也把一路的成长，做成看得见的样子。</div>
+  <div class="stage-actions">
+    <a class="btn" href="#work">看作品</a>
+    <a class="btn ghost" href="#contact">聊一聊</a>
+  </div>
+  <div class="scroll-cue" aria-hidden="true">
+    <svg class="icon"><use href="#i-chev"/></svg>
+    <svg class="icon"><use href="#i-chev"/></svg>
+    <svg class="icon"><use href="#i-chev"/></svg>
+  </div>
+</section>
+
+<!-- 大数字带 -->
+<section class="stats-band">
+  <div class="sec-inner">
+    <div class="stats-grid">
+      <div class="stat reveal"><span class="ic"><svg class="icon"><use href="#i-pen"/></svg></span><b>201 篇</b><span>公众号文章目录</span></div>
+      <div class="stat reveal d1"><span class="ic"><svg class="icon"><use href="#i-target"/></svg></span><b>10 条</b><span>视频号作品</span></div>
+      <a class="stat reveal d1" href="https://github.com/JahanHe/Shop-ai-reply" target="_blank" rel="noopener"><span class="ic"><svg class="icon"><use href="#i-code"/></svg></span><b>449 次</b><span>代码迭代（GitHub）</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- 关于 -->
+<section id="about" class="sec">
+  <div class="sec-inner">
+    <div class="sec-head reveal"><span class="label">关于</span><h2>先认识一下</h2></div>
+    <div class="about-grid">
+      <div class="reveal">
+        <p class="about-lead">我是金航，Jahan。<br>写内容，也做产品，<em>把想法做成能用的东西</em>。</p>
+        <p class="about-copy">在视频号和公众号「金航超级行」持续日更，写个人成长与长期主义；也在微信生态里做产品、做投放。我相信流量会退潮，但真诚的表达和真正好用的工具，会留下来。</p>
+      </div>
+      <div class="reveal d1">
+        <div class="theses" style="grid-template-columns:1fr">
+          <div class="thesis" style="padding:26px 28px"><div class="no"><svg class="icon"><use href="#i-pen"/></svg></div><h3 style="font-size:1.4rem">把事讲透</h3><p>201 篇文章、10 条视频，写成长，也写怎么把日子过好。</p></div>
+          <div class="thesis" style="padding:26px 28px"><div class="no"><svg class="icon"><use href="#i-code"/></svg></div><h3 style="font-size:1.4rem">把想法落地</h3><p>从 0 到 1 做产品，自己设计、自己写、自己上线。</p></div>
+          <div class="thesis" style="padding:26px 28px"><div class="no"><svg class="icon"><use href="#i-chart"/></svg></div><h3 style="font-size:1.4rem">让好事出圈</h3><p>短视频与直播投放，从素材到结算。</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 产品展示带（发布会） -->
+<section class="showcase">
+  <div class="sec-inner">
+    <span class="label reveal">产品 · v0.9.10</span>
+    <h2 class="reveal d1">回复有温度</h2>
+    <p class="lead reveal d1">微信小店客服 Electron 桌面工作台。AI 规划、本机知识、送达验证，macOS 与 Windows 双平台。</p>
+
+    <div class="device reveal d2" aria-hidden="true">
+      <div class="device-bar"><i></i><i></i><i></i></div>
+      <div class="device-screen">
+        <div class="mock-side"><div class="m hi"></div><div class="m"></div><div class="m s"></div><div class="m"></div><div class="m s"></div></div>
+        <div class="mock-main">
+          <div class="bubble in">你好，这个还有货吗？<span class="meta">客户 · 12:01</span></div>
+          <div class="bubble out">在的，今天下单还赶得上今天发货。需要的话我直接把链接发你。<span class="meta">AI 候选 · 已校验 · 12:01</span></div>
+          <div class="bubble in">好的，发我。<span class="meta">客户 · 12:02</span></div>
+          <div class="bubble out">已发送商品卡，点击就能下单。<span class="meta">动作已执行 · 回读消息气泡确认送达</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="feature-row">
+      <div class="feature reveal"><span class="ic"><svg class="icon"><use href="#i-cpu"/></svg></span><h5>AI 规划</h5><p>先选知识、再出计划，不瞎回。</p></div>
+      <div class="feature reveal d1"><span class="ic"><svg class="icon"><use href="#i-book"/></svg></span><h5>本机知识</h5><p>资料留在本地，生产回复只查本机索引。</p></div>
+      <div class="feature reveal d2"><span class="ic"><svg class="icon"><use href="#i-shield"/></svg></span><h5>送达验证</h5><p>回读到消息气泡才算数，凭证不外泄。</p></div>
+    </div>
+    <div class="showcase-cta reveal"><button class="btn" data-case="shopai">查看完整案例</button></div>
+  </div>
+</section>
+
+<!-- 作品 -->
+<section id="work" class="sec">
+  <div class="sec-inner">
+    <div class="sec-head reveal"><span class="label">作品</span><h2>诚意呈现</h2><p>先展开看个大概，想细看，再进完整案例。</p></div>
+
+    <div class="group">
+      <div class="group-head reveal"><span class="gno"><svg class="icon"><use href="#i-pen"/></svg></span><h3>把事讲透</h3></div>
+      <div class="cards">
+        <article class="card reveal" data-case="content">
+          <div class="thumb art-a"><span class="fmt"><svg class="icon"><use href="#i-pen"/></svg>公众号 · 视频号</span></div>
+          <div class="card-body">
+            <div class="tagline">长期输出</div><h4>日更，算数</h4>
+            <p class="plain">201 篇文章、10 条视频，写成长，也写怎么把日子过好。</p>
+            <div class="preview">
+              <div class="row"><span class="k">起点</span><span class="v">想持续表达，但常常写着写着就断了。</span></div>
+              <div class="row"><span class="k">判断</span><span class="v">不追爆款，先把「日更」变成习惯，写自己真正经历过的。</span></div>
+              <div class="row"><span class="k">行动</span><span class="v">公众号与视频号双平台持续更新，把 201 篇文章整理成可检索目录。</span></div>
+            </div>
+            <div class="card-actions"><button class="linkbtn expand">展开<svg class="icon chev" style="font-size:14px"><use href="#i-chev"/></svg></button><button class="linkbtn detail" data-case="content">查看完整案例<svg class="icon" style="font-size:14px"><use href="#i-arrow"/></svg></button></div>
+          </div>
+        </article>
+        <article class="card reveal d1" data-case="longterm">
+          <div class="thumb art-d"><span class="fmt"><svg class="icon"><use href="#i-book"/></svg>文章系列</span></div>
+          <div class="card-body">
+            <div class="tagline">思考</div><h4>慢慢来</h4>
+            <p class="plain">把「长期主义」写成能落地的日常，而不是一句口号。</p>
+            <div class="preview">
+              <div class="row"><span class="k">起点</span><span class="v">长期主义很容易变成空话。</span></div>
+              <div class="row"><span class="k">判断</span><span class="v">不写大道理，写具体的选择和代价。</span></div>
+              <div class="row"><span class="k">行动</span><span class="v">从读书、工作和日常里，拆出可执行的小动作。</span></div>
+            </div>
+            <div class="card-actions"><button class="linkbtn expand">展开<svg class="icon chev" style="font-size:14px"><use href="#i-chev"/></svg></button><button class="linkbtn detail" data-case="longterm">查看完整案例<svg class="icon" style="font-size:14px"><use href="#i-arrow"/></svg></button></div>
+          </div>
+        </article>
+      </div>
+    </div>
+
+    <div class="group">
+      <div class="group-head reveal"><span class="gno"><svg class="icon"><use href="#i-code"/></svg></span><h3>把想法落地</h3></div>
+      <div class="cards">
+        <article class="card reveal" data-case="shopai">
+          <div class="thumb art-e"><span class="fmt"><svg class="icon"><use href="#i-code"/></svg>产品 · v0.9.10</span></div>
+          <div class="card-body">
+            <div class="tagline">微信小店 · Electron</div><h4>回复有温度</h4>
+            <p class="plain">微信小店客服 Electron 桌面工作台，macOS / Windows 双平台。</p>
+            <div class="preview">
+              <div class="row"><span class="k">起点</span><span class="v">小店客服回复慢、资料发错、容易漏单。</span></div>
+              <div class="row"><span class="k">判断</span><span class="v">不做「全自动瞎回」，用 AI 规划 + 本机知识 + 动作可验证。</span></div>
+              <div class="row"><span class="k">行动</span><span class="v">Electron 桌面端、客服页注入、云端 Relay、ReplyRun 审计、企微通知。</span></div>
+            </div>
+            <div class="card-actions"><button class="linkbtn expand">展开<svg class="icon chev" style="font-size:14px"><use href="#i-chev"/></svg></button><button class="linkbtn detail" data-case="shopai">查看完整案例<svg class="icon" style="font-size:14px"><use href="#i-arrow"/></svg></button></div>
+          </div>
+        </article>
+        <article class="card reveal d1" data-case="site">
+          <div class="thumb art-c"><span class="fmt"><svg class="icon"><use href="#i-work"/></svg>网站 · 数据</span></div>
+          <div class="card-body">
+            <div class="tagline">一人一栈</div><h4>一人一栈</h4>
+            <p class="plain">网站、后台与 AI 可读数据一体，日夜双主题。</p>
+            <div class="preview">
+              <div class="row"><span class="k">起点</span><span class="v">作品散落各处，人和 AI 都读不全。</span></div>
+              <div class="row"><span class="k">判断</span><span class="v">一份数据同时供人读和 AI 读，权限分开。</span></div>
+              <div class="row"><span class="k">行动</span><span class="v">原生 HTML/CSS/JS、后台编辑、JSON / Markdown 导出。</span></div>
+            </div>
+            <div class="card-actions"><button class="linkbtn expand">展开<svg class="icon chev" style="font-size:14px"><use href="#i-chev"/></svg></button><button class="linkbtn detail" data-case="site">查看完整案例<svg class="icon" style="font-size:14px"><use href="#i-arrow"/></svg></button></div>
+          </div>
+        </article>
+        <article class="card reveal d2" data-case="visual">
+          <div class="thumb art-g"><span class="fmt"><svg class="icon"><use href="#i-spark"/></svg>设计</span></div>
+          <div class="card-body">
+            <div class="tagline">视觉</div><h4>一眼看见</h4>
+            <p class="plain">金句海报、视频封面与品牌视觉。</p>
+            <div class="preview">
+              <div class="row"><span class="k">起点</span><span class="v">好内容，也需要一眼被看见。</span></div>
+              <div class="row"><span class="k">判断</span><span class="v">信息做减法，一句话 + 一个视觉重点。</span></div>
+              <div class="row"><span class="k">行动</span><span class="v">海报、封面与通用素材模板。</span></div>
+            </div>
+            <div class="card-actions"><button class="linkbtn expand">展开<svg class="icon chev" style="font-size:14px"><use href="#i-chev"/></svg></button><button class="linkbtn detail" data-case="visual">查看完整案例<svg class="icon" style="font-size:14px"><use href="#i-arrow"/></svg></button></div>
+          </div>
+        </article>
+      </div>
+    </div>
+
+    <div class="group">
+      <div class="group-head reveal"><span class="gno"><svg class="icon"><use href="#i-chart"/></svg></span><h3>让好事出圈</h3></div>
+      <div class="cards">
+        <article class="card reveal" data-case="ads">
+          <div class="thumb art-f"><span class="fmt"><svg class="icon"><use href="#i-chart"/></svg>投放 · 增长</span></div>
+          <div class="card-body">
+            <div class="tagline">短视频 · 直播</div><h4>把钱花在点上</h4>
+            <p class="plain">短视频与直播投放，从素材到结算的全流程。</p>
+            <div class="preview">
+              <div class="row"><span class="k">起点</span><span class="v">投放花得多，却看不清钱花在哪。</span></div>
+              <div class="row"><span class="k">判断</span><span class="v">先看数据再加量，素材和人群分开测。</span></div>
+              <div class="row"><span class="k">行动</span><span class="v">素材、计划、投放、结算一条线，复盘到单条。</span></div>
+            </div>
+            <div class="card-actions"><button class="linkbtn expand">展开<svg class="icon chev" style="font-size:14px"><use href="#i-chev"/></svg></button><button class="linkbtn detail" data-case="ads">查看完整案例<svg class="icon" style="font-size:14px"><use href="#i-arrow"/></svg></button></div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 工具箱 -->
+<section class="sec sec-soft">
+  <div class="sec-inner">
+    <div class="sec-head reveal"><span class="label">工具箱</span><h2>来，看家本领</h2></div>
+    <div class="bento">
+      <div class="tile wide reveal"><span class="ic"><svg class="icon"><use href="#i-pen"/></svg></span><div><h4>内容与表达</h4><p>选题、写作、脚本、短视频。把复杂的事讲清楚，是基本功。</p></div></div>
+      <div class="tile reveal d1"><span class="ic"><svg class="icon"><use href="#i-code"/></svg></span><div><h4>产品与开发</h4><p>Electron、HTML/CSS/JS，自己写上线。</p></div></div>
+      <div class="tile reveal"><span class="ic"><svg class="icon"><use href="#i-cpu"/></svg></span><div><h4>AI 应用</h4><p>把 AI 接进真实流程。</p></div></div>
+      <div class="tile reveal d1"><span class="ic"><svg class="icon"><use href="#i-wechat"/></svg></span><div><h4>微信生态</h4><p>视频号、公众号、私域。</p></div></div>
+      <div class="tile reveal d2"><span class="ic"><svg class="icon"><use href="#i-chart"/></svg></span><div><h4>投放与增长</h4><p>数据驱动的投放与复盘。</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 影响 -->
+<section class="sec">
+  <div class="sec-inner">
+    <div class="sec-head reveal"><span class="label">影响我的人</span><h2>心有回响</h2></div>
+    <div class="infl-grid">
+      <div class="infl reveal"><span class="ic"><svg class="icon"><use href="#i-book"/></svg></span><h4>罗振宇</h4><p>长期主义与知识服务。把一件事做久，本身就是答案。</p></div>
+      <div class="infl reveal d1"><span class="ic"><svg class="icon"><use href="#i-wechat"/></svg></span><h4>润宇</h4><p>微信生态与创业。视频号、私域与个人 IP 的方法论来源。</p></div>
+      <div class="infl reveal d2"><span class="ic"><svg class="icon"><use href="#i-globe"/></svg></span><h4>何同学</h4><p>数码与 AI 评测。技术和表达可以同样动人。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 联系 -->
+<section id="contact" class="sec contact">
+  <div class="sec-inner">
+    <div class="sec-head reveal" style="margin-bottom:28px"><span class="label">联系</span><h2>恨晚相见，我也超期待</h2></div>
+    <p class="line reveal d1">视频号 / 公众号：金航超级行<br><a href="https://github.com/JahanHe" target="_blank" rel="noopener">GitHub · JahanHe</a> · <a href="#">微信</a> · <a href="mailto:jahan@example.com">邮件</a></p>
+    <div class="btn-row reveal d2"><button class="btn" onclick="window.print()"><svg class="icon"><use href="#i-download"/></svg>下载 PDF 简历</button><a class="btn ghost" href="mailto:jahan@example.com"><svg class="icon"><use href="#i-mail"/></svg>发邮件</a></div>
+    <div class="footer">© 2026 金航 Jahan · 保留所有权利</div>
+  </div>
+</section>
+
+<!-- 详情浮层 -->
+<div class="overlay" id="overlay" aria-hidden="true" role="dialog" aria-modal="true">
+  <div class="backdrop" data-close></div>
+  <div class="panel">
+    <button class="close" data-close aria-label="关闭"><svg class="icon"><use href="#i-close"/></svg></button>
+    <div class="panel-inner" id="panelInner"></div>
+  </div>
+</div>
+
+<script>
+  (function () {
+    var root = document.documentElement, btn = document.getElementById('themeToggle'), use = btn.querySelector('use');
+    function sync() { var n = root.getAttribute('data-theme') === 'night'; use.setAttribute('href', n ? '#i-sun' : '#i-moon'); }
+    sync();
+    btn.addEventListener('click', function () {
+      var next = root.getAttribute('data-theme') === 'night' ? 'day' : 'night';
+      root.setAttribute('data-theme', next);
+      try { localStorage.setItem('theme', next); } catch (e) {}
+      sync();
+    });
+  })();
+
+  var io = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }); }, { threshold: 0.14 });
+  document.querySelectorAll('.reveal').forEach(function (el) { io.observe(el); });
+
+  document.querySelectorAll('.expand').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var card = btn.closest('.card');
+      var open = card.classList.toggle('open');
+      btn.firstChild.nodeValue = open ? '收起' : '展开';
+    });
+  });
+
+  var CASES = {
+    content: { label: '写 · 公众号 / 视频号', title: '日更，算数', plain: '201 篇文章、10 条视频，写成长，也写怎么把日子过好。', problem: '想持续表达，但常常写着写着就断了。断了几次之后，我开始怀疑自己是不是不适合写作。', judgment: '不追爆款，也不等「准备好」。先把日更变成习惯，只写自己真正经历、真正想明白的事。', action: '公众号与视频号「金航超级行」双平台持续更新；把 201 篇文章整理成可检索的目录，方便自己回看，也方便别人找到。', result: '201 篇公众号文章目录、10 条视频号作品，形成稳定的表达节奏。这里的数字是目录收录量，不等于全平台全部历史发文。', skills: ['长期写作', '选题', '内容运营', '表达'], evidence: '公众号 / 视频号「金航超级行」' },
+    longterm: { label: '写 · 文章系列', title: '慢慢来', plain: '把「长期主义」写成能落地的日常，而不是一句口号。', problem: '长期主义听上去很对，但很容易变成一句空话，说完什么也没发生。', judgment: '不写大道理，写具体的选择和代价：今天放弃了什么，坚持了什么。', action: '从读书、工作和日常里，拆出可以马上做的小动作，写成一篇篇能回看的文章。', result: '形成一组可反复回看的系列文章，也慢慢长成了自己的判断标准。', skills: ['思考', '写作', '把抽象讲具体'], evidence: '「金航超级行」系列文章' },
+    shopai: { label: '做 · 产品 v0.9.10', title: '回复有温度', plain: '微信小店客服 Electron 桌面工作台，macOS / Windows 双平台。', problem: '小店客服每天面对大量重复问题：回复慢、资料发错、容易漏单，人一累就更乱。', judgment: '不做「全自动瞎回」。AI 只负责规划和候选，知识来自本机，动作必须可验证，发没发送要看页面证据。', action: 'Electron 桌面端承载客服页，注入脚本观测和执行，云端 AI Relay 生成计划，ReplyRun 记录每次回复，企业微信 Webhook 做通知。', result: '迭代到 v0.9.10，提供 macOS 与 Windows 安装包；送达以回读到客服侧消息气泡为准，而不是「点了发送」就算数。', skills: ['产品设计', 'Electron / JavaScript', 'AI 工程化', '隐私边界'], evidence: 'GitHub · JahanHe/Shop-ai-reply' },
+    site: { label: '做 · 网站与数据', title: '一人一栈', plain: '网站、后台与 AI 可读数据一体，日夜双主题。', problem: '作品散落在不同平台，人读不全，AI 也读不全。', judgment: '一份数据，同时供人阅读和 AI 读取；展示权限和读取权限分开管理。', action: '用原生 HTML / CSS / JavaScript 搭网站与后台，支持编辑、预览、JSON / Markdown 导出，日夜双主题。', result: '完成本地可用版本：201 篇文章 + 10 条视频目录，日夜模式可切换，数据供人和 AI 共用。', skills: ['前端', '信息架构', '数据规范'], evidence: '本项目 / 个人网站方案' },
+    visual: { label: '做 · 设计', title: '一眼看见', plain: '金句海报、视频封面与品牌视觉。', problem: '好内容如果没有一个好的第一眼，很多人根本不会点开。', judgment: '信息做减法：一句话，一个视觉重点，不堆元素。', action: '做金句海报、视频封面与可复用的通用素材模板。', result: '一套能反复使用的视觉模板，让内容在信息流里更容易被看见。', skills: ['视觉设计', '排版', '品牌'], evidence: '海报 / 封面设计素材' },
+    ads: { label: '推 · 投放与增长', title: '把钱花在点上', plain: '短视频与直播投放，从素材到结算的全流程。', problem: '投放花得多，却常常看不清钱到底花在哪、哪一条有效。', judgment: '先看数据再加量；素材和人群分开测，不为「看起来热闹」买单。', action: '把素材、计划、投放、结算串成一条线，复盘细到单条内容。', result: '服务多个账号的短视频与直播投放与结算（客户信息不公开）。', skills: ['投放', '数据分析', '增长'], evidence: '投放与结算资料' }
+  };
+
+  var overlay = document.getElementById('overlay');
+  var panelInner = document.getElementById('panelInner');
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]; }); }
+  function openCase(id) {
+    var c = CASES[id]; if (!c) return;
+    var chips = (c.skills || []).map(function (s) { return '<span class="chip">' + esc(s) + '</span>'; }).join('');
+    panelInner.innerHTML =
+      '<div class="o-label">' + esc(c.label) + '</div><div class="o-title">' + esc(c.title) + '</div><div class="o-plain">' + esc(c.plain) + '</div>' +
+      '<div class="o-block"><h5>起点</h5><p>' + esc(c.problem) + '</p></div>' +
+      '<div class="o-block"><h5>判断</h5><p>' + esc(c.judgment) + '</p></div>' +
+      '<div class="o-block"><h5>行动</h5><p>' + esc(c.action) + '</p></div>' +
+      '<div class="o-block"><h5>结果</h5><p>' + esc(c.result) + '</p></div>' +
+      '<div class="o-block"><h5>体现的能力</h5><div class="chips">' + chips + '</div></div>' +
+      '<div class="o-block"><h5>证据</h5><p>' + esc(c.evidence) + '</p></div>' +
+      '<div class="o-foot"><button class="btn" data-close>关闭</button></div>';
+    overlay.classList.add('open'); overlay.setAttribute('aria-hidden', 'false'); document.body.style.overflow = 'hidden';
+    try { history.replaceState(null, '', '#/case/' + id); } catch (e) {}
+    overlay.querySelector('.panel').scrollTop = 0;
+  }
+  function closeCase() {
+    overlay.classList.remove('open'); overlay.setAttribute('aria-hidden', 'true'); document.body.style.overflow = '';
+    try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {}
+  }
+  document.querySelectorAll('.detail').forEach(function (btn) { btn.addEventListener('click', function () { openCase(btn.dataset.case); }); });
+  overlay.addEventListener('click', function (e) { if (e.target.hasAttribute('data-close')) closeCase(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && overlay.classList.contains('open')) closeCase(); });
+  function fromHash() { var m = location.hash.match(/^#\/case\/([a-zA-Z0-9_-]+)$/); if (m && CASES[m[1]]) openCase(m[1]); }
+  window.addEventListener('hashchange', fromHash);
+  fromHash();
+</script>
 </body>
 </html>
