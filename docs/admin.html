@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>金航 · 管理后台</title>
+<style>
+  :root {
+    --bg: #eef0f2; --surface: rgba(255,255,255,.82); --ink: #0b0b0d; --text: #4b4d52;
+    --muted: #7b7f87; --line: rgba(18,18,20,.075); --line-strong: rgba(18,18,20,.14);
+    --blue: #1a73e8; --blue-hover: #1558d6; --blue-soft: #e8f0fe;
+    --green: #188038; --green-soft: #e6f4ea; --red: #d93025; --red-soft: #fce8e6;
+    --radius-panel: 38px; --radius-card: 28px; --radius-input: 22px;
+    --shadow: 0 10px 24px rgba(25,25,28,.06);
+    --font: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font: 14px/1.55 var(--font); -webkit-font-smoothing: antialiased; min-height: 100vh; }
+  .icon { width: 1em; height: 1em; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* 登录 */
+  .login { min-height: 100vh; display: grid; place-items: center; padding: 20px; }
+  .login-card { width: min(400px, 100%); background: var(--surface); backdrop-filter: blur(18px); border: 1px solid rgba(255,255,255,.8); border-radius: var(--radius-card); padding: 40px 36px; box-shadow: var(--shadow); }
+  .login-card .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; color: var(--ink); font-size: 18px; margin-bottom: 26px; }
+  .login-card .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--blue); }
+  .login-card p { color: var(--muted); font-size: 13px; margin-bottom: 18px; }
+  .login-card input { width: 100%; height: 48px; border-radius: var(--radius-input); border: 1px solid var(--line-strong); background: #fff; padding: 0 18px; font: 16px var(--font); color: var(--ink); outline: none; }
+  .login-card input:focus { border-color: var(--blue); box-shadow: 0 0 0 4px rgba(26,115,232,.18); }
+  .login-card button { margin-top: 16px; width: 100%; height: 48px; border: 0; border-radius: 999px; background: var(--blue); color: #fff; font: 600 15px var(--font); cursor: pointer; }
+  .login-card button:hover { background: var(--blue-hover); }
+  .login-err { margin-top: 12px; font-size: 13px; color: var(--red); display: none; }
+
+  /* 外壳 */
+  .app { display: none; min-height: 100vh; }
+  .app.on { display: grid; grid-template-columns: 232px minmax(0,1fr); }
+  .side { position: sticky; top: 0; height: 100vh; background: var(--surface); backdrop-filter: blur(22px); border-right: 1px solid var(--line); padding: 22px 14px; display: flex; flex-direction: column; gap: 4px; }
+  .side .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; color: var(--ink); font-size: 15px; padding: 6px 12px 20px; }
+  .side .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--blue); }
+  .side button { display: flex; align-items: center; gap: 12px; min-height: 48px; padding: 0 14px; border: 0; border-radius: 999px; background: none; font: 400 14px var(--font); color: var(--text); cursor: pointer; text-align: left; }
+  .side button:hover { background: rgba(255,255,255,.7); color: var(--ink); }
+  .side button.active { background: var(--blue-soft); color: var(--blue); font-weight: 600; }
+  .side .spacer { flex: 1; }
+  .side .out { color: var(--muted); font-size: 13px; }
+
+  .main { padding: 34px clamp(20px, 4vw, 52px) 60px; max-width: 1200px; }
+  .page-title { font-size: 26px; font-weight: 700; color: var(--ink); }
+  .page-sub { color: var(--muted); font-size: 13px; margin-top: 6px; margin-bottom: 26px; }
+
+  /* 卡片 */
+  .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 22px; }
+  .kpi { background: var(--surface); backdrop-filter: blur(18px); border: 1px solid rgba(255,255,255,.8); border-radius: var(--radius-card); padding: 22px 24px; box-shadow: var(--shadow); }
+  .kpi .label { font-size: 12px; color: var(--muted); }
+  .kpi .num { font-size: clamp(28px, 3vw, 38px); font-weight: 700; color: var(--ink); line-height: 1.1; margin-top: 6px; }
+  .kpi .hint { font-size: 11.5px; color: var(--muted); margin-top: 4px; }
+
+  .panel { background: var(--surface); backdrop-filter: blur(18px); border: 1px solid rgba(255,255,255,.8); border-radius: var(--radius-card); padding: 24px; box-shadow: var(--shadow); margin-bottom: 22px; }
+  .panel h3 { font-size: 15px; font-weight: 600; color: var(--ink); margin-bottom: 16px; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+
+  /* 条形图 */
+  .bars { display: flex; align-items: flex-end; gap: 10px; height: 120px; padding-top: 6px; }
+  .bars .b { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; height: 100%; justify-content: flex-end; }
+  .bars .b i { display: block; width: 100%; max-width: 44px; background: linear-gradient(180deg, var(--blue), #6ea8f7); border-radius: 8px 8px 4px 4px; min-height: 4px; }
+  .bars .b span { font-size: 11px; color: var(--muted); }
+  .bars .b b { font-size: 12px; color: var(--ink); }
+
+  .hbar-row { display: grid; grid-template-columns: 88px 1fr 44px; align-items: center; gap: 12px; padding: 7px 0; }
+  .hbar-row .n { font-size: 13px; color: var(--text); }
+  .hbar-row .track { height: 8px; border-radius: 4px; background: rgba(18,18,20,.06); overflow: hidden; }
+  .hbar-row .fill { height: 100%; border-radius: 4px; background: var(--blue); }
+  .hbar-row .v { font-size: 12px; color: var(--muted); text-align: right; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; color: var(--muted); font-weight: 600; font-size: 12px; padding: 8px 10px; border-bottom: 1px solid var(--line-strong); }
+  td { padding: 9px 10px; border-bottom: 1px solid var(--line); color: var(--text); vertical-align: top; }
+  tr:last-child td { border-bottom: 0; }
+  .pill { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 11.5px; font-weight: 600; }
+  .pill.g { background: var(--green-soft); color: var(--green); }
+  .pill.b { background: var(--blue-soft); color: var(--blue); }
+  .pill.y { background: #fff8e1; color: #996f00; }
+  .pill.r { background: var(--red-soft); color: var(--red); }
+
+  .empty { text-align: center; color: var(--muted); padding: 40px 0; font-size: 13.5px; line-height: 1.8; }
+  .note { font-size: 12.5px; color: var(--muted); line-height: 1.7; background: var(--blue-soft); border-radius: 14px; padding: 12px 16px; margin-bottom: 18px; }
+  .danger-btn { border: 1px solid rgba(217,48,37,.4); background: #fff; color: var(--red); border-radius: 999px; padding: 9px 20px; font: 600 13px var(--font); cursor: pointer; }
+  .danger-btn:hover { background: var(--red-soft); }
+
+  .view { display: none; }
+  .view.on { display: block; }
+
+  @media (max-width: 900px) {
+    .app.on { grid-template-columns: 84px minmax(0,1fr); }
+    .side button span { display: none; }
+    .side .brand span { display: none; }
+    .side button { justify-content: center; padding: 0; }
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    .two-col { grid-template-columns: 1fr; }
+    .main { padding: 24px 16px 50px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- 登录 -->
+<div class="login" id="login">
+  <div class="login-card">
+    <div class="brand"><span class="dot"></span>金航 · 管理后台</div>
+    <p>仅本人使用。当前为本地演示版：数据保存在这台浏览器，只能看到本机的访问记录。</p>
+    <input type="password" id="passcode" placeholder="访问口令" autocomplete="off">
+    <button onclick="tryLogin()">进入后台</button>
+    <div class="login-err" id="loginErr">口令不对，再试一次。</div>
+  </div>
+</div>
+
+<!-- 外壳 -->
+<div class="app" id="app">
+  <aside class="side">
+    <div class="brand"><span class="dot"></span><span>金航 · 后台</span></div>
+    <button data-view="dash" class="active" onclick="showView('dash')"><svg class="icon"><use href="#i-chart"/></svg><span>数据总览</span></button>
+    <button data-view="events" onclick="showView('events')"><svg class="icon"><use href="#i-list"/></svg><span>互动明细</span></button>
+    <button data-view="content" onclick="showView('content')"><svg class="icon"><use href="#i-doc"/></svg><span>内容清单</span></button>
+    <div class="spacer"></div>
+    <button class="out" onclick="logout()"><svg class="icon"><use href="#i-out"/></svg><span>退出</span></button>
+  </aside>
+
+  <main class="main">
+    <!-- 总览 -->
+    <section class="view on" id="view-dash">
+      <div class="page-title">数据总览</div>
+      <div class="page-sub">本机浏览数据 · 匿名编号，不记录任何输入内容</div>
+      <div class="kpi-grid">
+        <div class="kpi"><div class="label">浏览次数</div><div class="num" id="kpiViews">0</div><div class="hint">页面打开次数</div></div>
+        <div class="kpi"><div class="label">访客数</div><div class="num" id="kpiUv">0</div><div class="hint">本机浏览器数</div></div>
+        <div class="kpi"><div class="label">互动次数</div><div class="num" id="kpiActs">0</div><div class="hint">展开 / 看案例 / 点链接</div></div>
+        <div class="kpi"><div class="label">互动率</div><div class="num" id="kpiRate">0%</div><div class="hint">互动 ÷ 浏览</div></div>
+      </div>
+      <div class="two-col">
+        <div class="panel">
+          <h3>近 7 天浏览</h3>
+          <div class="bars" id="bars7"></div>
+        </div>
+        <div class="panel">
+          <h3>板块到达率</h3>
+          <div id="sectionBars"></div>
+        </div>
+      </div>
+      <div class="panel">
+        <h3>作品互动榜</h3>
+        <table><thead><tr><th>作品</th><th>展开</th><th>看完整案例</th><th>合计</th></tr></thead><tbody id="cardRows"></tbody></table>
+      </div>
+    </section>
+
+    <!-- 明细 -->
+    <section class="view" id="view-events">
+      <div class="page-title">互动明细</div>
+      <div class="page-sub">最近 30 条事件 · 时间倒序</div>
+      <div class="panel">
+        <table><thead><tr><th>时间</th><th>事件</th><th>对象</th><th>访客</th></tr></thead><tbody id="eventRows"></tbody></table>
+        <div class="empty" id="eventEmpty" style="display:none">还没有数据。去前台 <a href="./" style="color:var(--blue)">jahanhe.github.io/mr-he-preview</a> 浏览一下，回来这里就有数字了。</div>
+      </div>
+      <button class="danger-btn" onclick="clearData()">清空本机数据</button>
+    </section>
+
+    <!-- 内容清单 -->
+    <section class="view" id="view-content">
+      <div class="page-title">内容清单</div>
+      <div class="page-sub">当前线上文案一览</div>
+      <div class="note">要改哪一句，直接把「编号 + 新文案」发给 Claude，改完自动推上线。这个页面只做查看，不发内容。</div>
+      <div class="panel">
+        <table><thead><tr><th>编号</th><th>位置</th><th>当前文案</th></tr></thead><tbody id="contentRows"></tbody></table>
+      </div>
+    </section>
+  </main>
+</div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13"/><path d="M3 6h.01M3 12h.01M3 18h.01"/></symbol>
+  <symbol id="i-doc" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/><path d="M9 13h6M9 17h4"/></symbol>
+  <symbol id="i-out" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></symbol>
+</svg>
+
+<script>
+  var PASSCODE = 'jahan';   // 演示口令，随时可改
+  var KEY = 'jahan_events';
+
+  // ---------- 登录 ----------
+  function tryLogin() {
+    var v = document.getElementById('passcode').value;
+    if (v === PASSCODE) {
+      sessionStorage.setItem('jahan_admin', '1');
+      openApp();
+    } else {
+      document.getElementById('loginErr').style.display = 'block';
+    }
+  }
+  document.getElementById('passcode').addEventListener('keydown', function (e) { if (e.key === 'Enter') tryLogin(); });
+  function logout() { sessionStorage.removeItem('jahan_admin'); location.reload(); }
+  function openApp() {
+    document.getElementById('login').style.display = 'none';
+    document.getElementById('app').classList.add('on');
+    renderAll();
+  }
+
+  // ---------- 数据 ----------
+  function readEvents() {
+    try { return JSON.parse(localStorage.getItem(KEY) || '[]'); } catch (e) { return []; }
+  }
+  var TYPE_NAME = { page_view: '浏览', section_view: '到达板块', content_open: '展开作品', content_detail: '查看案例', link_click: '点击链接', scroll_depth: '滚动深度' };
+  var PILL = { page_view: 'b', section_view: 'g', content_open: 'y', content_detail: 'b', link_click: 'g', scroll_depth: 'y' };
+  var CASE_NAME = { content: '日更，算数', longterm: '慢慢来', shopai: '回复有温度', site: '一人一栈', visual: '一眼看见', ads: '把钱花在点上' };
+  var SECTION_NAME = { hero: '首屏', stats: '数字带', about: '关于', theses: '三件事', showcase: '产品', work: '作品', toolbox: '工具箱', influence: '影响', contact: '联系' };
+
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]; }); }
+
+  function renderAll() {
+    var ev = readEvents();
+    var views = ev.filter(function (e) { return e.event_type === 'page_view'; });
+    var uv = {}; views.forEach(function (e) { uv[e.visitor_id] = 1; });
+    var acts = ev.filter(function (e) { return e.event_type === 'content_open' || e.event_type === 'content_detail' || e.event_type === 'link_click'; });
+
+    document.getElementById('kpiViews').textContent = views.length;
+    document.getElementById('kpiUv').textContent = Object.keys(uv).length;
+    document.getElementById('kpiActs').textContent = acts.length;
+    document.getElementById('kpiRate').textContent = views.length ? Math.round(acts.length / views.length * 100) + '%' : '0%';
+
+    // 近 7 天
+    var days = [], counts = {};
+    for (var i = 6; i >= 0; i--) {
+      var d = new Date(); d.setDate(d.getDate() - i);
+      var k = d.toISOString().slice(0, 10);
+      days.push(k); counts[k] = 0;
+    }
+    views.forEach(function (e) { var k = (e.time || '').slice(0, 10); if (counts[k] !== undefined) counts[k]++; });
+    var max = Math.max(1, Math.max.apply(null, days.map(function (k) { return counts[k]; })));
+    document.getElementById('bars7').innerHTML = days.map(function (k) {
+      var h = Math.round(counts[k] / max * 96);
+      return '<div class="b"><b>' + counts[k] + '</b><i style="height:' + h + 'px"></i><span>' + k.slice(5).replace('-', '/') + '</span></div>';
+    }).join('');
+
+    // 板块到达率
+    var secCount = {};
+    ev.forEach(function (e) { if (e.event_type === 'section_view') secCount[e.component_id] = (secCount[e.component_id] || 0) + 1; });
+    var secRows = '';
+    Object.keys(SECTION_NAME).forEach(function (id) {
+      var n = secCount[id] || 0, pct = views.length ? Math.round(n / views.length * 100) : 0;
+      secRows += '<div class="hbar-row"><span class="n">' + SECTION_NAME[id] + '</span><span class="track"><span class="fill" style="width:' + pct + '%"></span></span><span class="v">' + pct + '%</span></div>';
+    });
+    document.getElementById('sectionBars').innerHTML = secRows;
+
+    // 作品榜
+    var cards = {};
+    ev.forEach(function (e) {
+      if (e.event_type === 'content_open' || e.event_type === 'content_detail') {
+        var id = e.record_id || '?';
+        cards[id] = cards[id] || { open: 0, detail: 0 };
+        if (e.event_type === 'content_open') cards[id].open++; else cards[id].detail++;
+      }
+    });
+    var rows = Object.keys(cards).sort(function (a, b) { return (cards[b].open + cards[b].detail) - (cards[a].open + cards[a].detail); });
+    document.getElementById('cardRows').innerHTML = rows.length ? rows.map(function (id) {
+      var c = cards[id];
+      return '<tr><td>' + esc(CASE_NAME[id] || id) + '</td><td>' + c.open + '</td><td>' + c.detail + '</td><td><b>' + (c.open + c.detail) + '</b></td></tr>';
+    }).join('') : '<tr><td colspan="4" class="empty">还没有作品互动</td></tr>';
+
+    // 明细
+    var recent = ev.slice(-30).reverse();
+    document.getElementById('eventEmpty').style.display = recent.length ? 'none' : 'block';
+    document.getElementById('eventRows').innerHTML = recent.map(function (e) {
+      var obj = e.record_id ? (CASE_NAME[e.record_id] || e.record_id) : (e.component_id || e.ref || '—');
+      if (e.event_type === 'link_click') obj = String(obj).replace('mailto:', '邮件 ').replace('https://', '');
+      return '<tr><td style="white-space:nowrap">' + esc((e.time || '').slice(5, 16).replace('T', ' ')) + '</td><td><span class="pill ' + (PILL[e.event_type] || 'b') + '">' + (TYPE_NAME[e.event_type] || e.event_type) + '</span></td><td>' + esc(String(obj).slice(0, 40)) + '</td><td>' + esc(String(e.visitor_id || '').slice(0, 10)) + '</td></tr>';
+    }).join('');
+
+    // 内容清单
+    var CONTENT = [
+      ['A1', '首屏主标题', '一步，一步步'],
+      ['A2', '首屏名字', '金航 · Jahan'],
+      ['A3', '首屏副标题', '写内容，做产品，也把一路的成长，做成看得见的样子。'],
+      ['B1', '关于标题', '先认识一下'],
+      ['C1', '作品标题', '诚意呈现'],
+      ['C2', '作品分组·写', '把事讲明白'],
+      ['C3', '作品分组·做', '把想法落地'],
+      ['C4', '作品分组·推', '让好事出圈'],
+      ['D1', '产品标题', '回复有温度'],
+      ['E1', '工具箱标题', '来，看家本领'],
+      ['F1', '影响标题', '心有回响'],
+      ['G1', '联系标题', '恨晚相见，我也超期待'],
+      ['W1', '作品卡·写', '日更，算数'],
+      ['W2', '作品卡·写', '慢慢来'],
+      ['W3', '作品卡·做', '回复有温度'],
+      ['W4', '作品卡·做', '一人一栈'],
+      ['W5', '作品卡·做', '一眼看见'],
+      ['W6', '作品卡·推', '把钱花在点上']
+    ];
+    document.getElementById('contentRows').innerHTML = CONTENT.map(function (r) {
+      return '<tr><td><span class="pill b">' + r[0] + '</span></td><td>' + r[1] + '</td><td>' + esc(r[2]) + '</td></tr>';
+    }).join('');
+  }
+
+  function clearData() {
+    if (confirm('确定清空这台浏览器里的统计数据？')) { localStorage.removeItem(KEY); renderAll(); }
+  }
+
+  function showView(name) {
+    document.querySelectorAll('.view').forEach(function (v) { v.classList.remove('on'); });
+    document.getElementById('view-' + name).classList.add('on');
+    document.querySelectorAll('.side button[data-view]').forEach(function (b) { b.classList.toggle('active', b.dataset.view === name); });
+  }
+
+  if (sessionStorage.getItem('jahan_admin') === '1') openApp();
+</script>
+</body>
+</html>

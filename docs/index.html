@@ -620,6 +620,48 @@
   function fromHash() { var m = location.hash.match(/^#\/case\/([a-zA-Z0-9_-]+)$/); if (m && CASES[m[1]]) openCase(m[1]); }
   window.addEventListener('hashchange', fromHash);
   fromHash();
+
+</script>
+<script>
+  // 匿名埋点：只存本机浏览器，不记录任何输入内容
+  (function () {
+    var KEY = 'jahan_events';
+    var vid;
+    try { vid = localStorage.getItem('jahan_vid'); if (!vid) { vid = 'v' + Math.random().toString(36).slice(2, 10); localStorage.setItem('jahan_vid', vid); } } catch (e) { vid = 'v0'; }
+    function track(type, comp, rec) {
+      try {
+        var ev = JSON.parse(localStorage.getItem(KEY) || '[]');
+        ev.push({ event_type: type, component_id: comp || null, record_id: rec || null, visitor_id: vid, time: new Date().toISOString(), path: location.pathname });
+        if (ev.length > 1000) ev = ev.slice(-1000);
+        localStorage.setItem(KEY, JSON.stringify(ev));
+      } catch (e) {}
+    }
+    track('page_view');
+    // 板块到达
+    var ids = [['hero', '.stage'], ['stats', '.stats-band'], ['about', '#about'], ['showcase', '.showcase'], ['work', '#work'], ['toolbox', '.sec-soft'], ['influence', '.infl-grid'], ['contact', '#contact']];
+    ids.forEach(function (pair) {
+      var el = document.querySelector(pair[1]);
+      if (!el) return;
+      var seen = false;
+      var io = new IntersectionObserver(function (es) {
+        es.forEach(function (e) {
+          if (e.isIntersecting && !seen) { seen = true; track('section_view', pair[0]); io.disconnect(); }
+        });
+      }, { threshold: 0.3 });
+      io.observe(el);
+    });
+    // 作品互动
+    document.querySelectorAll('.expand').forEach(function (b) {
+      b.addEventListener('click', function () { track('content_open', 'card', b.closest('[data-case]') ? b.closest('[data-case]').dataset.case : null); });
+    });
+    document.querySelectorAll('.detail, .showcase-cta .btn').forEach(function (b) {
+      b.addEventListener('click', function () { track('content_detail', 'case', b.dataset.case || (b.closest('[data-case]') ? b.closest('[data-case]').dataset.case : null)); });
+    });
+    // 外链点击
+    document.querySelectorAll('a[href^="http"], a[href^="mailto:"]').forEach(function (a) {
+      a.addEventListener('click', function () { track('link_click', (a.getAttribute('href') || '').slice(0, 60)); });
+    });
+  })();
 </script>
 </body>
 </html>
