@@ -93,6 +93,54 @@
   .view.on { display: block; }
 
   /* ---------- 编辑器 ---------- */
+  .ed-layout { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); gap: 20px; align-items: start; }
+  .ed-left { min-width: 0; }
+  .ed-preview { position: sticky; top: 12px; }
+  .pv-frame { background: #0b0a09; border-radius: 18px; overflow: hidden; border: 1px solid rgba(18,18,20,.25); box-shadow: var(--shadow); }
+  .pv-bar { display: flex; align-items: center; gap: 8px; padding: 10px 14px; background: #17141f; }
+  .pv-bar i { width: 9px; height: 9px; border-radius: 50%; }
+  .pv-bar .r { background: #ff5f57; } .pv-bar .y { background: #febc2e; } .pv-bar .g { background: #28c840; }
+  .pv-bar .url { flex: 1; text-align: center; font-size: 11px; color: #9a9aa2; font-family: ui-monospace, Menlo, monospace; }
+  .pv-body { max-height: 560px; overflow-y: auto; background: #0b0a09; padding: 0; }
+  .pv-sec { padding: 26px 22px; }
+  .pv-hero { text-align: center; padding: 42px 22px 30px; background: radial-gradient(120% 120% at 50% -10%, #16305a 0%, #0a1626 46%, #05090f 100%); }
+  .pv-hero h1 { font-size: 24px; color: #fff; font-weight: 700; margin: 0; white-space: nowrap; }
+  .pv-hero .pv-name { margin-top: 10px; font-size: 12px; color: #9ec5ff; font-weight: 600; letter-spacing: .06em; }
+  .pv-hero .pv-sub { margin-top: 8px; font-size: 11.5px; color: #a1b4cf; line-height: 1.6; }
+  .pv-label { font-size: 10px; letter-spacing: .18em; color: #4d8bd6; font-weight: 700; }
+  .pv-h2 { font-size: 19px; font-weight: 700; color: #fff; margin: 8px 0 4px; white-space: nowrap; }
+  .pv-h3 { font-size: 14px; font-weight: 700; color: #b2d0ff; margin: 22px 0 8px; }
+  .pv-p { font-size: 11.5px; color: #becfe5; line-height: 1.7; margin: 4px 0; }
+  .pv-em { color: #4d8bd6; }
+  .pv-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 16px 22px; border-top: 1px solid rgba(255,255,255,.08); border-bottom: 1px solid rgba(255,255,255,.08); }
+  .pv-stat b { display: block; font-size: 15px; color: #b2d0ff; font-weight: 700; }
+  .pv-stat span { font-size: 10px; color: #8a9ab5; }
+  .pv-thesis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 10px; }
+  .pv-th { background: #12101c; border: 1px solid rgba(255,255,255,.08); border-radius: 12px; padding: 12px; }
+  .pv-th .no { font-size: 9px; color: #4d8bd6; letter-spacing: .12em; }
+  .pv-th h4 { font-size: 12.5px; color: #fff; margin: 6px 0 4px; }
+  .pv-th p { font-size: 10px; color: #8a9ab5; line-height: 1.6; margin: 0; }
+  .pv-card { background: #12101c; border: 1px solid rgba(255,255,255,.08); border-radius: 12px; padding: 14px; margin-top: 10px; }
+  .pv-card .tag { font-size: 9px; color: #4d8bd6; letter-spacing: .08em; }
+  .pv-card h4 { font-size: 14px; color: #fff; margin: 4px 0; }
+  .pv-card p { font-size: 10.5px; color: #8a9ab5; line-height: 1.6; margin: 0; }
+  .pv-feat { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 12px; text-align: center; }
+  .pv-feat h5 { font-size: 11px; color: #fff; margin: 4px 0 2px; }
+  .pv-feat p { font-size: 9.5px; color: #8a9ab5; margin: 0; line-height: 1.5; }
+  .pv-infl { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 8px; }
+  .pv-in { background: #12101c; border: 1px solid rgba(255,255,255,.08); border-radius: 12px; padding: 12px; }
+  .pv-in b { font-size: 12px; color: #fff; display: block; }
+  .pv-in p { font-size: 9.5px; color: #8a9ab5; line-height: 1.5; margin: 4px 0 0; }
+  .pv-tile { background: #12101c; border: 1px solid rgba(255,255,255,.08); border-radius: 12px; padding: 14px; }
+  .pv-tile h4 { font-size: 12.5px; color: #fff; margin: 6px 0 4px; }
+  .pv-tile p { font-size: 10px; color: #8a9ab5; line-height: 1.6; margin: 0; }
+  .pv-contact { text-align: center; padding: 34px 22px 26px; background: radial-gradient(120% 120% at 50% -10%, #16305a 0%, #0a1626 46%, #05090f 100%); }
+  .pv-qrow { display: grid; grid-template-columns: 44px 1fr; gap: 6px; font-size: 10px; padding: 5px 0; border-top: 1px solid rgba(255,255,255,.06); }
+  .pv-qrow:first-of-type { border-top: 0; }
+  .pv-qrow .k { color: #4d8bd6; }
+  .pv-qrow .v { color: #becfe5; line-height: 1.55; }
+  @media (max-width: 1100px) { .ed-layout { grid-template-columns: 1fr; } .ed-preview { position: static; } }
+
   .ed-group { background: var(--surface); backdrop-filter: blur(18px); border: 1px solid rgba(255,255,255,.8); border-radius: var(--radius-card); box-shadow: var(--shadow); margin-bottom: 16px; overflow: hidden; }
   .ed-group summary { display: flex; align-items: center; gap: 12px; padding: 18px 24px; cursor: pointer; font-weight: 600; color: var(--ink); font-size: 15px; list-style: none; }
   .ed-group summary::-webkit-details-marker { display: none; }
@@ -191,7 +239,15 @@
         <input type="file" id="importFile" accept=".json" style="display:none" onchange="importEdits(this)">
         <span class="stat" id="edStat">0 处改动</span>
       </div>
-      <div id="editorRoot"></div>
+      <div class="ed-layout">
+        <div class="ed-left"><div id="editorRoot"></div></div>
+        <div class="ed-preview">
+          <div class="pv-frame">
+            <div class="pv-bar"><i class="r"></i><i class="y"></i><i class="g"></i><span class="url">jahanhe.github.io/Jahan-web</span></div>
+            <div class="pv-body" id="pvBody"></div>
+          </div>
+        </div>
+      </div>
     </section>
   </main>
 </div>
@@ -359,6 +415,33 @@
   var CASE_NAME = { content: '日更，算数', longterm: '慢慢来', shopai: '回复有温度', site: '一人一栈', visual: '一眼看见', ads: '把钱花在点上' };
   var SECTION_NAME = { hero: '首屏', stats: '数字带', about: '关于', showcase: '产品', work: '作品', toolbox: '工具箱', influence: '影响', contact: '联系' };
 
+  /* ---------- 实时预览 ---------- */
+  function pv(f) { var ed = getEdits(); return ed[f] !== undefined ? ed[f] : (FIELDS.filter(function(g){return g.items.some(function(x){return x.id===f})})[0]||{items:[{v:''}]}).items.filter(function(x){return x.id===f})[0].v; }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]; }); }
+  function renderPreview() {
+    var b = document.getElementById('pvBody'); if (!b) return;
+    var pvQ = function (id) { return '<div class="pv-qrow"><span class="k">起点</span><span class="v">' + esc(pv(id)).slice(0, 60) + '…</span></div>'; };
+    b.innerHTML =
+      '<div class="pv-hero"><h1>' + esc(pv('A1')) + '</h1><div class="pv-name">' + esc(pv('A2')) + '</div><div class="pv-sub">' + esc(pv('A3')) + '</div></div>' +
+      '<div class="pv-stats"><div class="pv-stat"><b>201 篇</b><span>公众号文章目录</span></div><div class="pv-stat"><b>10 条</b><span>视频号作品</span></div><div class="pv-stat"><b>449 次</b><span>代码迭代（GitHub）</span></div></div>' +
+      '<div class="pv-sec"><span class="pv-label">关于</span><div class="pv-h2">' + esc(pv('B1')) + '</div><p class="pv-p">' + esc(pv('B2')) + '<br>' + esc(pv('B3')) + '<span class="pv-em">' + esc(pv('B4')) + '</span>。</p><p class="pv-p">' + esc(pv('B5')).slice(0, 80) + '…</p>' +
+        '<div class="pv-thesis"><div class="pv-th"><div class="no">写</div><h4>' + esc(pv('T1')) + '</h4><p>' + esc(pv('T1d')) + '</p></div><div class="pv-th"><div class="no">做</div><h4>' + esc(pv('T2')) + '</h4><p>' + esc(pv('T2d')) + '</p></div><div class="pv-th"><div class="no">推</div><h4>' + esc(pv('T3')) + '</h4><p>' + esc(pv('T3d')) + '</p></div></div></div>' +
+      '<div class="pv-sec"><span class="pv-label">' + esc(pv('D1')) + '</span><div class="pv-h2">' + esc(pv('D2')) + '</div><p class="pv-p">' + esc(pv('D3')) + '</p><div class="pv-feat"><div><h5>' + esc(pv('D4')) + '</h5><p>' + esc(pv('D5')) + '</p></div><div><h5>' + esc(pv('D6')) + '</h5><p>' + esc(pv('D7')) + '</p></div><div><h5>' + esc(pv('D8')) + '</h5><p>' + esc(pv('D9')) + '</p></div></div></div>' +
+      '<div class="pv-sec"><span class="pv-label">作品</span><div class="pv-h2">' + esc(pv('W0')) + '</div><p class="pv-p">' + esc(pv('W0s')) + '</p>' +
+        '<div class="pv-h3">' + esc(pv('T1')) + '</div>' +
+        '<div class="pv-card"><span class="tag">' + esc(pv('W1')) + '</span><h4>' + esc(pv('W1t')) + '</h4><p>' + esc(pv('W1p')) + '</p>' + pvQ('W1q1') + pvQ('W1q2') + pvQ('W1q3') + '</div>' +
+        '<div class="pv-card"><span class="tag">' + esc(pv('W2')) + '</span><h4>' + esc(pv('W2t')) + '</h4><p>' + esc(pv('W2p')) + '</p></div>' +
+        '<div class="pv-h3">' + esc(pv('T2')) + '</div>' +
+        '<div class="pv-card"><span class="tag">' + esc(pv('W3')) + '</span><h4>' + esc(pv('W3t')) + '</h4><p>' + esc(pv('W3p')) + '</p></div>' +
+        '<div class="pv-card"><span class="tag">' + esc(pv('W4')) + '</span><h4>' + esc(pv('W4t')) + '</h4><p>' + esc(pv('W4p')) + '</p></div>' +
+        '<div class="pv-card"><span class="tag">' + esc(pv('W5')) + '</span><h4>' + esc(pv('W5t')) + '</h4><p>' + esc(pv('W5p')) + '</p></div>' +
+        '<div class="pv-h3">' + esc(pv('T3')) + '</div>' +
+        '<div class="pv-card"><span class="tag">' + esc(pv('W6')) + '</span><h4>' + esc(pv('W6t')) + '</h4><p>' + esc(pv('W6p')) + '</p></div></div>' +
+      '<div class="pv-sec"><span class="pv-label">工具箱</span><div class="pv-h2">' + esc(pv('E1')) + '</div><div class="pv-thesis" style="grid-template-columns:repeat(2,1fr)"><div class="pv-tile"><h4>' + esc(pv('E2')) + '</h4><p>' + esc(pv('E3')) + '</p></div><div class="pv-tile"><h4>' + esc(pv('E4')) + '</h4><p>' + esc(pv('E5')) + '</p></div><div class="pv-tile"><h4>' + esc(pv('E6')) + '</h4><p>' + esc(pv('E7')) + '</p></div><div class="pv-tile"><h4>' + esc(pv('E8')) + '</h4><p>' + esc(pv('E9')) + '</p></div><div class="pv-tile"><h4>' + esc(pv('E10')) + '</h4><p>' + esc(pv('E11')) + '</p></div></div></div>' +
+      '<div class="pv-sec"><span class="pv-label">影响我的人</span><div class="pv-h2">' + esc(pv('F1')) + '</div><div class="pv-infl"><div class="pv-in"><b>' + esc(pv('F2')) + '</b><p>' + esc(pv('F3')) + '</p></div><div class="pv-in"><b>' + esc(pv('F4')) + '</b><p>' + esc(pv('F5')) + '</p></div><div class="pv-in"><b>' + esc(pv('F6')) + '</b><p>' + esc(pv('F7')) + '</p></div></div></div>' +
+      '<div class="pv-contact"><span class="pv-label">联系</span><div class="pv-h2">' + esc(pv('G1')) + '</div><p class="pv-p">' + esc(pv('G2')) + '</p><p class="pv-p">' + esc(pv('G5')) + '</p></div>';
+  }
+
   function renderStats() {
     var ev = readEvents();
     var views = ev.filter(function (e) { return e.event_type === 'page_view'; });
@@ -441,6 +524,7 @@
         if (el.value === orig) delete ed[fid]; else ed[fid] = el.value;
         saveEdits(ed);
         el.closest('.field').classList.toggle('changed', el.value !== orig);
+        renderPreview();
         updateEdStat();
         var sum = el.closest('.ed-group').querySelector('summary .cnt');
         var gc = el.closest('.ed-group').querySelectorAll('.field.changed').length;
