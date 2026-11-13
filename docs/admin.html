@@ -43,11 +43,11 @@
   .side .spacer { flex: 1; }
   .side .out { color: var(--muted); font-size: 13px; }
 
-  .main { padding: 34px clamp(20px, 4vw, 52px) 60px; max-width: 1200px; }
+  .main { padding: 34px clamp(20px, 4vw, 52px) 80px; max-width: 1200px; }
   .page-title { font-size: 26px; font-weight: 700; color: var(--ink); }
   .page-sub { color: var(--muted); font-size: 13px; margin-top: 6px; margin-bottom: 26px; }
 
-  /* 卡片 */
+  /* KPI 卡片 */
   .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 22px; }
   .kpi { background: var(--surface); backdrop-filter: blur(18px); border: 1px solid rgba(255,255,255,.8); border-radius: var(--radius-card); padding: 22px 24px; box-shadow: var(--shadow); }
   .kpi .label { font-size: 12px; color: var(--muted); }
@@ -58,7 +58,6 @@
   .panel h3 { font-size: 15px; font-weight: 600; color: var(--ink); margin-bottom: 16px; }
   .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
 
-  /* 条形图 */
   .bars { display: flex; align-items: flex-end; gap: 10px; height: 120px; padding-top: 6px; }
   .bars .b { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; height: 100%; justify-content: flex-end; }
   .bars .b i { display: block; width: 100%; max-width: 44px; background: linear-gradient(180deg, var(--blue), #6ea8f7); border-radius: 8px 8px 4px 4px; min-height: 4px; }
@@ -85,9 +84,32 @@
   .note { font-size: 12.5px; color: var(--muted); line-height: 1.7; background: var(--blue-soft); border-radius: 14px; padding: 12px 16px; margin-bottom: 18px; }
   .danger-btn { border: 1px solid rgba(217,48,37,.4); background: #fff; color: var(--red); border-radius: 999px; padding: 9px 20px; font: 600 13px var(--font); cursor: pointer; }
   .danger-btn:hover { background: var(--red-soft); }
+  .btn { border: 0; border-radius: 999px; background: var(--blue); color: #fff; padding: 11px 22px; font: 600 13.5px var(--font); cursor: pointer; }
+  .btn:hover { background: var(--blue-hover); }
+  .btn.ghost { background: #fff; color: var(--blue); border: 1px solid rgba(26,115,232,.35); }
+  .btn.ghost:hover { background: var(--blue-soft); }
 
   .view { display: none; }
   .view.on { display: block; }
+
+  /* ---------- 编辑器 ---------- */
+  .ed-group { background: var(--surface); backdrop-filter: blur(18px); border: 1px solid rgba(255,255,255,.8); border-radius: var(--radius-card); box-shadow: var(--shadow); margin-bottom: 16px; overflow: hidden; }
+  .ed-group summary { display: flex; align-items: center; gap: 12px; padding: 18px 24px; cursor: pointer; font-weight: 600; color: var(--ink); font-size: 15px; list-style: none; }
+  .ed-group summary::-webkit-details-marker { display: none; }
+  .ed-group summary .cnt { font-size: 11.5px; font-weight: 600; color: var(--green); background: var(--green-soft); border-radius: 999px; padding: 2px 10px; }
+  .ed-group summary .arr { margin-left: auto; color: var(--muted); transition: transform .2s; }
+  .ed-group[open] summary .arr { transform: rotate(90deg); }
+  .ed-fields { padding: 4px 24px 22px; }
+  .field { margin-bottom: 14px; }
+  .field label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 5px; }
+  .field label b { color: var(--blue); font-family: ui-monospace, Menlo, monospace; font-size: 11px; margin-right: 6px; }
+  .field input, .field textarea { width: 100%; border-radius: 14px; border: 1px solid var(--line-strong); background: #fff; padding: 10px 14px; font: 14px/1.6 var(--font); color: var(--ink); outline: none; resize: vertical; }
+  .field textarea { min-height: 74px; }
+  .field input:focus, .field textarea:focus { border-color: var(--blue); box-shadow: 0 0 0 4px rgba(26,115,232,.14); }
+  .field.changed input, .field.changed textarea { border-color: var(--green); background: #f4fbf6; }
+  .ed-actions { position: sticky; top: 12px; z-index: 5; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; background: var(--surface); backdrop-filter: blur(18px); border: 1px solid rgba(255,255,255,.8); border-radius: 999px; padding: 10px 14px; box-shadow: var(--shadow); margin-bottom: 20px; }
+  .ed-actions .stat { font-size: 12.5px; color: var(--muted); margin-left: auto; padding-right: 6px; }
+  .toast { position: fixed; right: 24px; bottom: 24px; background: #2a2d33; color: #fff; border-radius: 16px; padding: 13px 20px; font-size: 13.5px; box-shadow: 0 12px 32px rgba(0,0,0,.28); display: none; z-index: 50; }
 
   @media (max-width: 900px) {
     .app.on { grid-template-columns: 84px minmax(0,1fr); }
@@ -96,7 +118,7 @@
     .side button { justify-content: center; padding: 0; }
     .kpi-grid { grid-template-columns: repeat(2, 1fr); }
     .two-col { grid-template-columns: 1fr; }
-    .main { padding: 24px 16px 50px; }
+    .main { padding: 24px 16px 60px; }
   }
 </style>
 </head>
@@ -106,7 +128,7 @@
 <div class="login" id="login">
   <div class="login-card">
     <div class="brand"><span class="dot"></span>金航 · 管理后台</div>
-    <p>仅本人使用。当前为本地演示版：数据保存在这台浏览器，只能看到本机的访问记录。</p>
+    <p>仅本人使用。数据与草稿都保存在本机浏览器，导出文件后由 Claude 更新线上。</p>
     <input type="password" id="passcode" placeholder="访问口令" autocomplete="off">
     <button onclick="tryLogin()">进入后台</button>
     <div class="login-err" id="loginErr">口令不对，再试一次。</div>
@@ -119,7 +141,7 @@
     <div class="brand"><span class="dot"></span><span>金航 · 后台</span></div>
     <button data-view="dash" class="active" onclick="showView('dash')"><svg class="icon"><use href="#i-chart"/></svg><span>数据总览</span></button>
     <button data-view="events" onclick="showView('events')"><svg class="icon"><use href="#i-list"/></svg><span>互动明细</span></button>
-    <button data-view="content" onclick="showView('content')"><svg class="icon"><use href="#i-doc"/></svg><span>内容清单</span></button>
+    <button data-view="editor" onclick="showView('editor')"><svg class="icon"><use href="#i-doc"/></svg><span>内容编辑</span></button>
     <div class="spacer"></div>
     <button class="out" onclick="logout()"><svg class="icon"><use href="#i-out"/></svg><span>退出</span></button>
   </aside>
@@ -136,14 +158,8 @@
         <div class="kpi"><div class="label">互动率</div><div class="num" id="kpiRate">0%</div><div class="hint">互动 ÷ 浏览</div></div>
       </div>
       <div class="two-col">
-        <div class="panel">
-          <h3>近 7 天浏览</h3>
-          <div class="bars" id="bars7"></div>
-        </div>
-        <div class="panel">
-          <h3>板块到达率</h3>
-          <div id="sectionBars"></div>
-        </div>
+        <div class="panel"><h3>近 7 天浏览</h3><div class="bars" id="bars7"></div></div>
+        <div class="panel"><h3>板块到达率</h3><div id="sectionBars"></div></div>
       </div>
       <div class="panel">
         <h3>作品互动榜</h3>
@@ -157,150 +173,347 @@
       <div class="page-sub">最近 30 条事件 · 时间倒序</div>
       <div class="panel">
         <table><thead><tr><th>时间</th><th>事件</th><th>对象</th><th>访客</th></tr></thead><tbody id="eventRows"></tbody></table>
-        <div class="empty" id="eventEmpty" style="display:none">还没有数据。去前台 <a href="./" style="color:var(--blue)">jahanhe.github.io/mr-he-preview</a> 浏览一下，回来这里就有数字了。</div>
+        <div class="empty" id="eventEmpty" style="display:none">还没有数据。去前台浏览一下，回来这里就有数字了。</div>
       </div>
       <button class="danger-btn" onclick="clearData()">清空本机数据</button>
     </section>
 
-    <!-- 内容清单 -->
-    <section class="view" id="view-content">
-      <div class="page-title">内容清单</div>
-      <div class="page-sub">当前线上文案一览</div>
-      <div class="note">要改哪一句，直接把「编号 + 新文案」发给 Claude，改完自动推上线。这个页面只做查看，不发内容。</div>
-      <div class="panel">
-        <table><thead><tr><th>编号</th><th>位置</th><th>当前文案</th></tr></thead><tbody id="contentRows"></tbody></table>
+    <!-- 编辑器 -->
+    <section class="view" id="view-editor">
+      <div class="page-title">内容编辑</div>
+      <div class="page-sub">改完自动存到本浏览器 · 导出文件发给 Claude，由 Claude 更新线上</div>
+      <div class="note">用法：① 展开分组，直接改文字，改动即时保存在本机；② 改完点「导出修改文件」，会下载一个 JSON；③ 把文件放到桌面（或告诉我路径），说一声「读我的修改」，Claude 就把改动推上线上。改动的字段会显示绿色边框，随时可「恢复全部默认」。</div>
+      <div class="ed-actions">
+        <button class="btn" onclick="exportEdits()"><svg class="icon" style="vertical-align:-2px"><use href="#i-down"/></svg> 导出修改文件</button>
+        <button class="btn ghost" onclick="copyEdits()">复制 JSON</button>
+        <button class="btn ghost" onclick="document.getElementById('importFile').click()">导入文件</button>
+        <button class="btn ghost" onclick="resetEdits()">恢复全部默认</button>
+        <input type="file" id="importFile" accept=".json" style="display:none" onchange="importEdits(this)">
+        <span class="stat" id="edStat">0 处改动</span>
       </div>
+      <div id="editorRoot"></div>
     </section>
   </main>
 </div>
+
+<div class="toast" id="toast"></div>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <symbol id="i-chart" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></symbol>
   <symbol id="i-list" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13"/><path d="M3 6h.01M3 12h.01M3 18h.01"/></symbol>
   <symbol id="i-doc" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/><path d="M9 13h6M9 17h4"/></symbol>
   <symbol id="i-out" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 3v12"/><path d="m7 11 5 5 5-5"/><path d="M5 21h14"/></symbol>
+  <symbol id="i-arr" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></symbol>
 </svg>
 
 <script>
-  var PASSCODE = 'jahan';   // 演示口令，随时可改
+  var PASSCODE = 'jahan';
   var KEY = 'jahan_events';
+  var EKEY = 'jahan_edits';
 
-  // ---------- 登录 ----------
+  /* ---------- 字段定义（与线上文案一一对应） ---------- */
+  var FIELDS = [
+    { group: '首屏', items: [
+      { id: 'A1', label: '主标题', v: '一步，一步步' },
+      { id: 'A2', label: '名字', v: '金航 · Jahan' },
+      { id: 'A3', label: '副标题', v: '写内容，做产品，也把一路的成长，做成看得见的样子。', area: true }
+    ]},
+    { group: '关于', items: [
+      { id: 'B1', label: '板块标题', v: '先认识一下' },
+      { id: 'B2', label: '导语第一句', v: '我是金航，Jahan。' },
+      { id: 'B3', label: '导语第二句（蓝色强调前）', v: '写内容，也做产品，' },
+      { id: 'B4', label: '导语蓝色强调词', v: '把想法做成能用的东西' },
+      { id: 'B5', label: '正文', v: '在视频号和公众号「金航超级行」持续日更，写个人成长与长期主义；也在微信生态里做产品、做投放。我相信流量会退潮，但真诚的表达和真正好用的工具，会留下来。', area: true }
+    ]},
+    { group: '三件事', items: [
+      { id: 'T1', label: '第一件 · 标题', v: '把事讲明白' },
+      { id: 'T1d', label: '第一件 · 描述', v: '201 篇文章、10 条视频，写成长，也写怎么把日子过好。', area: true },
+      { id: 'T2', label: '第二件 · 标题', v: '把想法落地' },
+      { id: 'T2d', label: '第二件 · 描述', v: '从 0 到 1 做产品，自己设计、自己写、自己上线。', area: true },
+      { id: 'T3', label: '第三件 · 标题', v: '让好事出圈' },
+      { id: 'T3d', label: '第三件 · 描述', v: '短视频与直播投放，从素材到结算。', area: true }
+    ]},
+    { group: '产品展示', items: [
+      { id: 'D1', label: '眉题（版本）', v: '产品 · v0.9.10' },
+      { id: 'D2', label: '标题', v: '回复有温度' },
+      { id: 'D3', label: '说明', v: '微信小店客服 Electron 桌面工作台。AI 规划、本机知识、送达验证，macOS 与 Windows 双平台。', area: true },
+      { id: 'D4', label: '特性1 · 名', v: 'AI 规划' },
+      { id: 'D5', label: '特性1 · 说明', v: '先选知识、再出计划，不瞎回。' },
+      { id: 'D6', label: '特性2 · 名', v: '本机知识' },
+      { id: 'D7', label: '特性2 · 说明', v: '资料留在本地，生产回复只查本机索引。' },
+      { id: 'D8', label: '特性3 · 名', v: '送达验证' },
+      { id: 'D9', label: '特性3 · 说明', v: '回读到消息气泡才算数，凭证不外泄。' }
+    ]},
+    { group: '作品 · 日更，算数', items: [
+      { id: 'W0', label: '板块标题', v: '诚意呈现' },
+      { id: 'W0s', label: '板块说明', v: '先展开看个大概，想细看，再进完整案例。' },
+      { id: 'W1', label: '小标签', v: '长期输出' },
+      { id: 'W1t', label: '卡片标题', v: '日更，算数' },
+      { id: 'W1p', label: '一句话说明', v: '201 篇文章、10 条视频，写成长，也写怎么把日子过好。', area: true },
+      { id: 'W1q1', label: '起点', v: '想持续表达，但常常写着写着就断了。断了几次之后，我开始怀疑自己是不是不适合写作。', area: true },
+      { id: 'W1q2', label: '判断', v: '不追爆款，也不等「准备好」。先把日更变成习惯，只写自己真正经历、真正想明白的事。', area: true },
+      { id: 'W1q3', label: '行动', v: '公众号与视频号「金航超级行」双平台持续更新；把 201 篇文章整理成可检索的目录，方便自己回看，也方便别人找到。', area: true },
+      { id: 'W1q4', label: '结果', v: '201 篇公众号文章目录、10 条视频号作品，形成稳定的表达节奏。这里的数字是目录收录量，不等于全平台全部历史发文。', area: true },
+      { id: 'W1sk', label: '能力（逗号分隔）', v: '长期写作, 选题, 内容运营, 表达' }
+    ]},
+    { group: '作品 · 慢慢来', items: [
+      { id: 'W2', label: '小标签', v: '思考' },
+      { id: 'W2t', label: '卡片标题', v: '慢慢来' },
+      { id: 'W2p', label: '一句话说明', v: '把「长期主义」写成能落地的日常，而不是一句口号。', area: true },
+      { id: 'W2q1', label: '起点', v: '长期主义听上去很对，但很容易变成一句空话，说完什么也没发生。', area: true },
+      { id: 'W2q2', label: '判断', v: '不写大道理，写具体的选择和代价：今天放弃了什么，坚持了什么。', area: true },
+      { id: 'W2q3', label: '行动', v: '从读书、工作和日常里，拆出可以马上做的小动作，写成一篇篇能回看的文章。', area: true },
+      { id: 'W2q4', label: '结果', v: '形成一组可反复回看的系列文章，也慢慢长成了自己的判断标准。', area: true },
+      { id: 'W2sk', label: '能力（逗号分隔）', v: '思考, 写作, 把抽象讲具体' }
+    ]},
+    { group: '作品 · 回复有温度', items: [
+      { id: 'W3', label: '小标签', v: '微信小店 · Electron' },
+      { id: 'W3t', label: '卡片标题', v: '回复有温度' },
+      { id: 'W3p', label: '一句话说明', v: '微信小店客服 Electron 桌面工作台，macOS / Windows 双平台。', area: true },
+      { id: 'W3q1', label: '起点', v: '小店客服每天面对大量重复问题：回复慢、资料发错、容易漏单，人一累就更乱。', area: true },
+      { id: 'W3q2', label: '判断', v: '不做「全自动瞎回」。AI 只负责规划和候选，知识来自本机，动作必须可验证，发没发送要看页面证据。', area: true },
+      { id: 'W3q3', label: '行动', v: 'Electron 桌面端承载客服页，注入脚本观测和执行，云端 AI Relay 生成计划，ReplyRun 记录每次回复，企业微信 Webhook 做通知。', area: true },
+      { id: 'W3q4', label: '结果', v: '迭代到 v0.9.10，提供 macOS 与 Windows 安装包；送达以回读到客服侧消息气泡为准，而不是「点了发送」就算数。', area: true },
+      { id: 'W3sk', label: '能力（逗号分隔）', v: '产品设计, Electron / JavaScript, AI 工程化, 隐私边界' }
+    ]},
+    { group: '作品 · 一人一栈', items: [
+      { id: 'W4', label: '小标签', v: '一人一栈' },
+      { id: 'W4t', label: '卡片标题', v: '一人一栈' },
+      { id: 'W4p', label: '一句话说明', v: '网站、后台与 AI 可读数据一体，日夜双主题。', area: true },
+      { id: 'W4q1', label: '起点', v: '作品散落在不同平台，人读不全，AI 也读不全。', area: true },
+      { id: 'W4q2', label: '判断', v: '一份数据，同时供人阅读和 AI 读取；展示权限和读取权限分开管理。', area: true },
+      { id: 'W4q3', label: '行动', v: '用原生 HTML / CSS / JavaScript 搭网站与后台，支持编辑、预览、JSON / Markdown 导出，日夜双主题。', area: true },
+      { id: 'W4q4', label: '结果', v: '完成本地可用版本：201 篇文章 + 10 条视频目录，日夜模式可切换，数据供人和 AI 共用。', area: true },
+      { id: 'W4sk', label: '能力（逗号分隔）', v: '前端, 信息架构, 数据规范' }
+    ]},
+    { group: '作品 · 一眼看见', items: [
+      { id: 'W5', label: '小标签', v: '视觉' },
+      { id: 'W5t', label: '卡片标题', v: '一眼看见' },
+      { id: 'W5p', label: '一句话说明', v: '金句海报、视频封面与品牌视觉。', area: true },
+      { id: 'W5q1', label: '起点', v: '好内容如果没有一个好的第一眼，很多人根本不会点开。', area: true },
+      { id: 'W5q2', label: '判断', v: '信息做减法：一句话，一个视觉重点，不堆元素。', area: true },
+      { id: 'W5q3', label: '行动', v: '做金句海报、视频封面与可复用的通用素材模板。', area: true },
+      { id: 'W5q4', label: '结果', v: '一套能反复使用的视觉模板，让内容在信息流里更容易被看见。', area: true },
+      { id: 'W5sk', label: '能力（逗号分隔）', v: '视觉设计, 排版, 品牌' }
+    ]},
+    { group: '作品 · 把钱花在点上', items: [
+      { id: 'W6', label: '小标签', v: '短视频 · 直播' },
+      { id: 'W6t', label: '卡片标题', v: '把钱花在点上' },
+      { id: 'W6p', label: '一句话说明', v: '短视频与直播投放，从素材到结算的全流程。', area: true },
+      { id: 'W6q1', label: '起点', v: '投放花得多，却常常看不清钱到底花在哪、哪一条有效。', area: true },
+      { id: 'W6q2', label: '判断', v: '先看数据再加量；素材和人群分开测，不为「看起来热闹」买单。', area: true },
+      { id: 'W6q3', label: '行动', v: '把素材、计划、投放、结算串成一条线，复盘细到单条内容。', area: true },
+      { id: 'W6q4', label: '结果', v: '服务多个账号的短视频与直播投放与结算（客户信息不公开）。', area: true },
+      { id: 'W6sk', label: '能力（逗号分隔）', v: '投放, 数据分析, 增长' }
+    ]},
+    { group: '工具箱', items: [
+      { id: 'E1', label: '板块标题', v: '来，看家本领' },
+      { id: 'E2', label: '大卡标题', v: '内容与表达' },
+      { id: 'E3', label: '大卡说明', v: '选题、写作、脚本、短视频。把复杂的事讲清楚，是基本功。', area: true },
+      { id: 'E4', label: '小卡2标题', v: '产品与开发' },
+      { id: 'E5', label: '小卡2说明', v: 'Electron、HTML/CSS/JS，自己写上线。' },
+      { id: 'E6', label: '小卡3标题', v: 'AI 应用' },
+      { id: 'E7', label: '小卡3说明', v: '把 AI 接进真实流程。' },
+      { id: 'E8', label: '小卡4标题', v: '微信生态' },
+      { id: 'E9', label: '小卡4说明', v: '视频号、公众号、私域。' },
+      { id: 'E10', label: '小卡5标题', v: '投放与增长' },
+      { id: 'E11', label: '小卡5说明', v: '数据驱动的投放与复盘。' }
+    ]},
+    { group: '影响', items: [
+      { id: 'F1', label: '板块标题', v: '心有回响' },
+      { id: 'F2', label: '人物1', v: '罗振宇' },
+      { id: 'F3', label: '人物1 · 一句话', v: '长期主义与知识服务。把一件事做久，本身就是答案。', area: true },
+      { id: 'F4', label: '人物2', v: '润宇' },
+      { id: 'F5', label: '人物2 · 一句话', v: '微信生态与创业。视频号、私域与个人 IP 的方法论来源。', area: true },
+      { id: 'F6', label: '人物3', v: '何同学' },
+      { id: 'F7', label: '人物3 · 一句话', v: '数码与 AI 评测。技术和表达可以同样动人。', area: true }
+    ]},
+    { group: '联系', items: [
+      { id: 'G1', label: '板块标题', v: '恨晚相见，我也超期待' },
+      { id: 'G2', label: '账号行', v: '视频号 / 公众号：金航超级行' },
+      { id: 'G3', label: 'GitHub 文字', v: 'GitHub · JahanHe' },
+      { id: 'G4', label: '邮箱（链接里用）', v: 'heeejinhang@gmail.com' },
+      { id: 'G5', label: '页脚版权', v: '© 2026 金航 Jahan · 保留所有权利' }
+    ]}
+  ];
+
+  /* ---------- 登录 ---------- */
   function tryLogin() {
-    var v = document.getElementById('passcode').value;
-    if (v === PASSCODE) {
-      sessionStorage.setItem('jahan_admin', '1');
-      openApp();
-    } else {
-      document.getElementById('loginErr').style.display = 'block';
-    }
+    if (document.getElementById('passcode').value === PASSCODE) {
+      sessionStorage.setItem('jahan_admin', '1'); openApp();
+    } else document.getElementById('loginErr').style.display = 'block';
   }
   document.getElementById('passcode').addEventListener('keydown', function (e) { if (e.key === 'Enter') tryLogin(); });
   function logout() { sessionStorage.removeItem('jahan_admin'); location.reload(); }
   function openApp() {
     document.getElementById('login').style.display = 'none';
     document.getElementById('app').classList.add('on');
-    renderAll();
+    renderStats(); renderEditor();
   }
 
-  // ---------- 数据 ----------
-  function readEvents() {
-    try { return JSON.parse(localStorage.getItem(KEY) || '[]'); } catch (e) { return []; }
-  }
-  var TYPE_NAME = { page_view: '浏览', section_view: '到达板块', content_open: '展开作品', content_detail: '查看案例', link_click: '点击链接', scroll_depth: '滚动深度' };
-  var PILL = { page_view: 'b', section_view: 'g', content_open: 'y', content_detail: 'b', link_click: 'g', scroll_depth: 'y' };
+  /* ---------- 统计 ---------- */
+  function readEvents() { try { return JSON.parse(localStorage.getItem(KEY) || '[]'); } catch (e) { return []; } }
+  var TYPE_NAME = { page_view: '浏览', section_view: '到达板块', content_open: '展开作品', content_detail: '查看案例', link_click: '点击链接' };
+  var PILL = { page_view: 'b', section_view: 'g', content_open: 'y', content_detail: 'b', link_click: 'g' };
   var CASE_NAME = { content: '日更，算数', longterm: '慢慢来', shopai: '回复有温度', site: '一人一栈', visual: '一眼看见', ads: '把钱花在点上' };
-  var SECTION_NAME = { hero: '首屏', stats: '数字带', about: '关于', theses: '三件事', showcase: '产品', work: '作品', toolbox: '工具箱', influence: '影响', contact: '联系' };
+  var SECTION_NAME = { hero: '首屏', stats: '数字带', about: '关于', showcase: '产品', work: '作品', toolbox: '工具箱', influence: '影响', contact: '联系' };
 
-  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]; }); }
-
-  function renderAll() {
+  function renderStats() {
     var ev = readEvents();
     var views = ev.filter(function (e) { return e.event_type === 'page_view'; });
     var uv = {}; views.forEach(function (e) { uv[e.visitor_id] = 1; });
-    var acts = ev.filter(function (e) { return e.event_type === 'content_open' || e.event_type === 'content_detail' || e.event_type === 'link_click'; });
-
+    var acts = ev.filter(function (e) { return ['content_open', 'content_detail', 'link_click'].indexOf(e.event_type) >= 0; });
     document.getElementById('kpiViews').textContent = views.length;
     document.getElementById('kpiUv').textContent = Object.keys(uv).length;
     document.getElementById('kpiActs').textContent = acts.length;
     document.getElementById('kpiRate').textContent = views.length ? Math.round(acts.length / views.length * 100) + '%' : '0%';
 
-    // 近 7 天
     var days = [], counts = {};
-    for (var i = 6; i >= 0; i--) {
-      var d = new Date(); d.setDate(d.getDate() - i);
-      var k = d.toISOString().slice(0, 10);
-      days.push(k); counts[k] = 0;
-    }
+    for (var i = 6; i >= 0; i--) { var d = new Date(); d.setDate(d.getDate() - i); var k = d.toISOString().slice(0, 10); days.push(k); counts[k] = 0; }
     views.forEach(function (e) { var k = (e.time || '').slice(0, 10); if (counts[k] !== undefined) counts[k]++; });
     var max = Math.max(1, Math.max.apply(null, days.map(function (k) { return counts[k]; })));
     document.getElementById('bars7').innerHTML = days.map(function (k) {
-      var h = Math.round(counts[k] / max * 96);
-      return '<div class="b"><b>' + counts[k] + '</b><i style="height:' + h + 'px"></i><span>' + k.slice(5).replace('-', '/') + '</span></div>';
+      return '<div class="b"><b>' + counts[k] + '</b><i style="height:' + Math.round(counts[k] / max * 96) + 'px"></i><span>' + k.slice(5).replace('-', '/') + '</span></div>';
     }).join('');
 
-    // 板块到达率
     var secCount = {};
     ev.forEach(function (e) { if (e.event_type === 'section_view') secCount[e.component_id] = (secCount[e.component_id] || 0) + 1; });
     var secRows = '';
     Object.keys(SECTION_NAME).forEach(function (id) {
-      var n = secCount[id] || 0, pct = views.length ? Math.round(n / views.length * 100) : 0;
+      var pct = views.length ? Math.round((secCount[id] || 0) / views.length * 100) : 0;
       secRows += '<div class="hbar-row"><span class="n">' + SECTION_NAME[id] + '</span><span class="track"><span class="fill" style="width:' + pct + '%"></span></span><span class="v">' + pct + '%</span></div>';
     });
     document.getElementById('sectionBars').innerHTML = secRows;
 
-    // 作品榜
     var cards = {};
     ev.forEach(function (e) {
       if (e.event_type === 'content_open' || e.event_type === 'content_detail') {
-        var id = e.record_id || '?';
-        cards[id] = cards[id] || { open: 0, detail: 0 };
+        var id = e.record_id || '?'; cards[id] = cards[id] || { open: 0, detail: 0 };
         if (e.event_type === 'content_open') cards[id].open++; else cards[id].detail++;
       }
     });
     var rows = Object.keys(cards).sort(function (a, b) { return (cards[b].open + cards[b].detail) - (cards[a].open + cards[a].detail); });
     document.getElementById('cardRows').innerHTML = rows.length ? rows.map(function (id) {
       var c = cards[id];
-      return '<tr><td>' + esc(CASE_NAME[id] || id) + '</td><td>' + c.open + '</td><td>' + c.detail + '</td><td><b>' + (c.open + c.detail) + '</b></td></tr>';
+      return '<tr><td>' + (CASE_NAME[id] || id) + '</td><td>' + c.open + '</td><td>' + c.detail + '</td><td><b>' + (c.open + c.detail) + '</b></td></tr>';
     }).join('') : '<tr><td colspan="4" class="empty">还没有作品互动</td></tr>';
 
-    // 明细
     var recent = ev.slice(-30).reverse();
     document.getElementById('eventEmpty').style.display = recent.length ? 'none' : 'block';
     document.getElementById('eventRows').innerHTML = recent.map(function (e) {
-      var obj = e.record_id ? (CASE_NAME[e.record_id] || e.record_id) : (e.component_id || e.ref || '—');
-      if (e.event_type === 'link_click') obj = String(obj).replace('mailto:', '邮件 ').replace('https://', '');
-      return '<tr><td style="white-space:nowrap">' + esc((e.time || '').slice(5, 16).replace('T', ' ')) + '</td><td><span class="pill ' + (PILL[e.event_type] || 'b') + '">' + (TYPE_NAME[e.event_type] || e.event_type) + '</span></td><td>' + esc(String(obj).slice(0, 40)) + '</td><td>' + esc(String(e.visitor_id || '').slice(0, 10)) + '</td></tr>';
-    }).join('');
-
-    // 内容清单
-    var CONTENT = [
-      ['A1', '首屏主标题', '一步，一步步'],
-      ['A2', '首屏名字', '金航 · Jahan'],
-      ['A3', '首屏副标题', '写内容，做产品，也把一路的成长，做成看得见的样子。'],
-      ['B1', '关于标题', '先认识一下'],
-      ['C1', '作品标题', '诚意呈现'],
-      ['C2', '作品分组·写', '把事讲明白'],
-      ['C3', '作品分组·做', '把想法落地'],
-      ['C4', '作品分组·推', '让好事出圈'],
-      ['D1', '产品标题', '回复有温度'],
-      ['E1', '工具箱标题', '来，看家本领'],
-      ['F1', '影响标题', '心有回响'],
-      ['G1', '联系标题', '恨晚相见，我也超期待'],
-      ['W1', '作品卡·写', '日更，算数'],
-      ['W2', '作品卡·写', '慢慢来'],
-      ['W3', '作品卡·做', '回复有温度'],
-      ['W4', '作品卡·做', '一人一栈'],
-      ['W5', '作品卡·做', '一眼看见'],
-      ['W6', '作品卡·推', '把钱花在点上']
-    ];
-    document.getElementById('contentRows').innerHTML = CONTENT.map(function (r) {
-      return '<tr><td><span class="pill b">' + r[0] + '</span></td><td>' + r[1] + '</td><td>' + esc(r[2]) + '</td></tr>';
+      var obj = e.record_id ? (CASE_NAME[e.record_id] || e.record_id) : (e.component_id || '—');
+      if (e.event_type === 'link_click') obj = String(obj).replace('mailto:', '邮件 ');
+      return '<tr><td style="white-space:nowrap">' + (e.time || '').slice(5, 16).replace('T', ' ') + '</td><td><span class="pill ' + (PILL[e.event_type] || 'b') + '">' + (TYPE_NAME[e.event_type] || e.event_type) + '</span></td><td>' + String(obj).slice(0, 40) + '</td><td>' + String(e.visitor_id || '').slice(0, 10) + '</td></tr>';
     }).join('');
   }
 
-  function clearData() {
-    if (confirm('确定清空这台浏览器里的统计数据？')) { localStorage.removeItem(KEY); renderAll(); }
+  function clearData() { if (confirm('确定清空这台浏览器里的统计数据？')) { localStorage.removeItem(KEY); renderStats(); } }
+
+  /* ---------- 编辑器 ---------- */
+  function getEdits() { try { return JSON.parse(localStorage.getItem(EKEY) || '{}'); } catch (e) { return {}; } }
+  function saveEdits(ed) { try { localStorage.setItem(EKEY, JSON.stringify(ed)); } catch (e) {} }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]; }); }
+
+  function renderEditor() {
+    var ed = getEdits();
+    var root = document.getElementById('editorRoot');
+    var html = '';
+    FIELDS.forEach(function (g) {
+      var changedInGroup = g.items.filter(function (f) { return ed[f.id] !== undefined && ed[f.id] !== f.v; }).length;
+      html += '<details class="ed-group"' + (changedInGroup ? ' open' : '') + '><summary>' + esc(g.group) +
+        (changedInGroup ? ' <span class="cnt">' + changedInGroup + ' 处改动</span>' : '') +
+        '<span class="arr"><svg class="icon"><use href="#i-arr"/></svg></span></summary><div class="ed-fields">';
+      g.items.forEach(function (f) {
+        var val = ed[f.id] !== undefined ? ed[f.id] : f.v;
+        var changed = ed[f.id] !== undefined && ed[f.id] !== f.v;
+        html += '<div class="field' + (changed ? ' changed' : '') + '"><label><b>' + f.id + '</b>' + esc(f.label) + '</label>' +
+          (f.area ? '<textarea data-fid="' + f.id + '">' + esc(val) + '</textarea>' : '<input data-fid="' + f.id + '" value="' + esc(val) + '">') + '</div>';
+      });
+      html += '</div></details>';
+    });
+    root.innerHTML = html;
+    root.querySelectorAll('input[data-fid],textarea[data-fid]').forEach(function (el) {
+      el.addEventListener('input', function () {
+        var fid = el.dataset.fid, ed = getEdits();
+        var orig = null;
+        FIELDS.forEach(function (g) { g.items.forEach(function (f) { if (f.id === fid) orig = f.v; }); });
+        if (el.value === orig) delete ed[fid]; else ed[fid] = el.value;
+        saveEdits(ed);
+        el.closest('.field').classList.toggle('changed', el.value !== orig);
+        updateEdStat();
+        var sum = el.closest('.ed-group').querySelector('summary .cnt');
+        var gc = el.closest('.ed-group').querySelectorAll('.field.changed').length;
+        if (sum) { sum.textContent = gc + ' 处改动'; sum.style.display = gc ? '' : 'none'; }
+      });
+    });
+    updateEdStat();
+  }
+
+  function updateEdStat() {
+    var ed = getEdits(), n = 0;
+    FIELDS.forEach(function (g) { g.items.forEach(function (f) { if (ed[f.id] !== undefined && ed[f.id] !== f.v) n++; }); });
+    document.getElementById('edStat').textContent = n + ' 处改动';
+  }
+
+  function buildExport() {
+    var ed = getEdits(), fields = [], n = 0;
+    FIELDS.forEach(function (g) {
+      g.items.forEach(function (f) {
+        var changed = ed[f.id] !== undefined && ed[f.id] !== f.v;
+        if (changed) n++;
+        fields.push({ id: f.id, group: g.group, label: f.label, original: f.v, value: ed[f.id] !== undefined ? ed[f.id] : f.v, changed: changed });
+      });
+    });
+    return { site: 'jahan-web', exported_at: new Date().toISOString(), changed_count: n, fields: fields };
+  }
+
+  function exportEdits() {
+    var data = buildExport();
+    if (!data.changed_count) { toast('没有改动可导出，先改点什么吧'); return; }
+    var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    var a = document.createElement('a');
+    var d = new Date();
+    a.href = URL.createObjectURL(blob);
+    a.download = 'jahan-edits-' + d.getFullYear() + ('0' + (d.getMonth() + 1)).slice(-2) + ('0' + d.getDate()).slice(-2) + '.json';
+    a.click(); URL.revokeObjectURL(a.href);
+    toast('已导出 ' + data.changed_count + ' 处改动，把文件发给 Claude 即可更新线上');
+  }
+
+  function copyEdits() {
+    var data = buildExport();
+    var txt = JSON.stringify(data, null, 2);
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(txt).then(function () { toast('JSON 已复制，直接粘贴给 Claude'); }, function () { fallbackCopy(txt); });
+    } else fallbackCopy(txt);
+  }
+  function fallbackCopy(txt) {
+    var ta = document.createElement('textarea'); ta.value = txt; document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); toast('JSON 已复制，直接粘贴给 Claude'); } catch (e) { toast('复制失败，请用导出文件'); }
+    ta.remove();
+  }
+
+  function importEdits(input) {
+    var file = input.files[0]; if (!file) return;
+    var r = new FileReader();
+    r.onload = function () {
+      try {
+        var data = JSON.parse(r.result), ed = getEdits();
+        (data.fields || []).forEach(function (f) { if (f.changed) ed[f.id] = f.value; });
+        saveEdits(ed); renderEditor(); toast('已导入，改动已合并');
+      } catch (e) { toast('文件格式不对'); }
+    };
+    r.readAsText(file); input.value = '';
+  }
+
+  function resetEdits() {
+    if (confirm('恢复全部默认文案？你所有未导出的改动会丢失。')) { localStorage.removeItem(EKEY); renderEditor(); toast('已恢复默认'); }
+  }
+
+  function toast(msg) {
+    var t = document.getElementById('toast');
+    t.textContent = msg; t.style.display = 'block';
+    clearTimeout(t._h); t._h = setTimeout(function () { t.style.display = 'none'; }, 2600);
   }
 
   function showView(name) {
