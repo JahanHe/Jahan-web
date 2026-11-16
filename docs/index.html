@@ -623,11 +623,30 @@
 
 </script>
 <script>
-  // 彩蛋：双击页脚进入管理后台
+  // 彩蛋：页脚连点 5 下或长按 1 秒进入管理后台
   (function () {
     var f = document.getElementById('footerEgg');
     if (!f) return;
-    f.addEventListener('dblclick', function () { location.href = 'admin.html'; });
+    var taps = 0, tapTimer = null, holdTimer = null, fired = false;
+    function go() { if (!fired) { fired = true; location.href = 'admin.html'; } }
+    f.addEventListener('click', function () {
+      taps++;
+      clearTimeout(tapTimer);
+      if (taps >= 5) { go(); return; }
+      tapTimer = setTimeout(function () { taps = 0; }, 1200);
+    });
+    f.addEventListener('touchstart', function () {
+      holdTimer = setTimeout(go, 1000);
+    }, { passive: true });
+    ['touchend', 'touchmove', 'touchcancel'].forEach(function (ev) {
+      f.addEventListener(ev, function () { clearTimeout(holdTimer); }, { passive: true });
+    });
+    f.addEventListener('mousedown', function () {
+      holdTimer = setTimeout(go, 1000);
+    });
+    ['mouseup', 'mouseleave', 'mousemove'].forEach(function (ev) {
+      f.addEventListener(ev, function () { clearTimeout(holdTimer); });
+    });
   })();
   // 匿名埋点：只存本机浏览器，不记录任何输入内容
   (function () {
